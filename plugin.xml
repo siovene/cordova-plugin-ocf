@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+        xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        id="cordova-plugin-oic" version="0.1.0">
+    <name>OIC</name>
+    <description>Cordova OIC Plugin</description>
+    <license>Apache 2.0</license>
+    <js-module src="www/oic.js" name="oic">
+        <clobbers target="oic"/>
+    </js-module>
+
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="OIC">
+                <param name="android-package" value="com.intel.cordova.plugin.oic.OIC"/>
+            </feature>
+        </config-file>
+        <source-file src="src/android/OIC.java" target-dir="src/" />
+    </platform>
+</plugin>
