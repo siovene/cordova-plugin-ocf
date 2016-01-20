@@ -17,8 +17,8 @@ public class OIC extends CordovaPlugin {
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext cc) {
         Log.d(TAG, "Executing Cordova action: " + action);
-        if ("OCInit".equals(action)) {
-            cc.success();
+        if ("__initDevice".equals(action)) {
+            cc.success(1);
             return true;
         }
 

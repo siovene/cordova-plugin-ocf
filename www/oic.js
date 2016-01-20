@@ -1,10 +1,28 @@
 cordova.define("cordova/plugin/oic", function(require, exports, module) {
-    var exec = require("cordova/exec");
+    var exec = require("cordova/exec"),
+        channel = require("cordova/channel");
 
-    var OIC = function() {}
+    channel.createSticky("onCordovaOicReady");
+    channel.waitForInitialization("onCordovaOicReady");
 
-    OIC.prototype.OCInit = function(successCallback, errorCallback) {
-        exec(successCallback, errorCallback, "OIC", "OCInit", []);
+    var OIC = function() {
+        var self = this;
+
+        channel.onCordovaReady.subscribe(function() {
+            self.__initDevice(
+                function(device) {
+                    self.device = device;
+                    channel.onCordovaOicReady.fire();
+                },
+                function(error) {
+                    console.error("Error initializing oic: " + error);
+                }
+            );
+        });
+    }
+
+    OIC.prototype.__initDevice = function(successCallback, errorCallback) {
+        exec(successCallback, errorCallback, "OIC", "__initDevice", []);
     };
 
     var oic = new OIC();
