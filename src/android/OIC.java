@@ -19,10 +19,13 @@ public class OIC extends CordovaPlugin {
         Log.d(TAG, "Executing Cordova action: " + action);
         if ("__initDevice".equals(action)) {
             cc.success(1);
-            return true;
+        } else if ("findResources".equals(action)) {
+            cc.success("ciao");
+        } else {
+            Log.e(TAG, "Unknown action");
+            return false; // MethodNotFound
         }
 
-        Log.e(TAG, "Unknown action");
-        return false; // MethodNotFound
+        return true;
     }
 }
