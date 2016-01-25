@@ -7,34 +7,33 @@ exports.defineAutoTests = function() {
             expect(oic).toBeDefined();
         });
 
-        it('oic has device', function(done) {
-            channel.onCordovaOicReady.subscribe(function() {
-                expect(oic.device).toBeDefined();
+        it('setting invalid backend works', function(done) {
+            expect(oic.setBackend).toBeDefined();
+            oic.setBackend("foo").then(function() {
+                done(new Error("Promise should not be resolved"));
+            }, function() {
+                // Promise is rejected
                 done();
             });
         });
 
-        it('oic.setBackend works', function() {
+        it('setting valid backend works', function(done) {
             expect(oic.setBackend).toBeDefined();
-            expect(function() {oic.setBackend("foo");}).toThrow(
-                new Error("Unknown backend"));
-
-            oic.setBackend("mock");
-            expect(oic.backend).toBe("mock");
-
-            oic.setBackend("iotivity");
-            expect(oic.backend).toBe("iotivity");
+            oic.setBackend("mock").then(function() {
+                done();
+            }, function() {
+                // Promise is rejected
+                done(new Error("Promise should be resolved"));
+            });
         });
 
-        it('oic.findResources works', function(done) {
-            var promise;
-
+        it('findResources works', function(done) {
             expect(oic.findResources).toBeDefined();
-            promise = oic.findResources();
-            expect(typeof promise).toBe('object');
-            promise.then(function success(data) {
-                expect(data).toBeDefined();
-                done();
+            oic.setBackend("mock").then(function() {
+                oic.findResources().then(function success(data) {
+                    expect(data).toBeDefined();
+                    done();
+                });
             });
         });
     });

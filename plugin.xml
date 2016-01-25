@@ -15,7 +15,12 @@
                 <param name="android-package" value="com.intel.cordova.plugin.oic.OIC"/>
             </feature>
         </config-file>
+
         <source-file src="src/android/OIC.java" target-dir="src/" />
+        <source-file src="src/android/OICBackendInterface.java" target-dir="src/" />
+        <source-file src="src/android/OICBackendMock.java" target-dir="src/" />
+        <source-file src="src/android/OICInvalidBackendException.java" target-dir="src/" />
+
         <framework src="src/android/oic.gradle" custom="true" type="gradleReference" />
         <resource-file src="libs/iotivity-base-x86-release.aar" target="libs/iotivity-base-x86-release.aar" />
     </platform>

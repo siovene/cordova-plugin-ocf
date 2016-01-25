@@ -1,9 +1,5 @@
 cordova.define("cordova/plugin/oic", function(require, exports, module) {
-    var exec = require("cordova/exec"),
-        channel = require("cordova/channel");
-
-    channel.createSticky("onCordovaOicReady");
-    channel.waitForInitialization("onCordovaOicReady");
+    var exec = require("cordova/exec");
 
     /**************************************************************************
     *  OICBackend                                                             *
@@ -30,33 +26,26 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
     *  The Cordova plugin.                                                    *
     **************************************************************************/
     var OIC = function() {
-        var self = this;
-
-        self.backend = "iotivity";
-
-        channel.onCordovaReady.subscribe(function() {
-            self.__initDevice(
-                function(device) {
-                    self.device = device;
-                    channel.onCordovaOicReady.fire();
-                },
-                function(error) {
-                    console.error("Error initializing oic: " + error);
-                }
-            );
-        });
+        this.backend = "iotivity";
     }
 
     OIC.prototype.setBackend = function(backend) {
-        if (backend === "iotivity" || backend === "mock")
-            this.backend = backend;
-        else
-            throw new Error("Unknown backend");
-    }
+        var self = this;
 
-    OIC.prototype.__initDevice = function(successCallback, errorCallback) {
-        exec(successCallback, errorCallback, "OIC", "__initDevice", []);
-    };
+        return new Promise(function(resolve, reject) {
+            function successCallback() {
+                self.backend = backend;
+                resolve();
+            }
+
+            function errorCallback(error) {
+                reject(error);
+            }
+
+            exec(successCallback, errorCallback, "OIC", "setBackend",
+                 [backend]);
+        });
+    }
 
     OIC.prototype.findResources = function(options) {
         if (options === undefined) {
