@@ -3,6 +3,7 @@ package com.intel.cordova.plugin.oic;
 // Cordova
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 
 // Android
 import android.util.Log;
@@ -14,7 +15,7 @@ import org.json.JSONException;
 
 public class OIC extends CordovaPlugin {
     static final String TAG = "OIC";
-    private OICBackendInterface backend;
+    private OICBackendInterface backend = new OICBackendMock();
 
     private void setBackend(JSONArray args)
         throws JSONException, OICInvalidBackendException
@@ -27,7 +28,8 @@ public class OIC extends CordovaPlugin {
         }
     }
 
-    private void findResources(JSONArray args) {
+    private void findResources(JSONArray args, CallbackContext cc) {
+        this.backend.findResources(args, cc);
     }
 
     @Override
@@ -42,16 +44,13 @@ public class OIC extends CordovaPlugin {
                 } catch (OICInvalidBackendException e) {
                     cc.error(e.getMessage());
                 }
-            }
-
-            if ("findResources".equals(action)) {
-                this.findResources(args);
-                cc.success();
-            }
-
-            else {
-                Log.e(TAG, "Unknown action");
-                cc.error("Unknown action");
+            } else if ("findResources".equals(action)) {
+                this.findResources(args, cc);
+                PluginResult result = new PluginResult(PluginResult.Status.OK);
+                cc.sendPluginResult(result);
+            } else {
+                Log.e(TAG, "Unknown action: " + action);
+                cc.error("Unknown action: " + action);
                 return false;
             }
         } catch (JSONException e) {

@@ -48,14 +48,21 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
     }
 
     OIC.prototype.findResources = function(options) {
+        var self = this;
+
         if (options === undefined) {
             options = {};
         }
 
-
         return new Promise(function(resolve, reject) {
-            function successCallback(data) {
-                resolve(data);
+            function successCallback(event) {
+                if (event === "OK") {
+                    // No event: this is just the native call completing.
+                    resolve();
+                } else {
+                    // Event passed: this is a "resource found" callback.
+                    self.onresourcefound(event);
+                }
             }
 
             function errorCallback(error) {
@@ -66,6 +73,8 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
                  [options]);
         });
     };
+
+    OIC.prototype.onresourcefound = function(event) {};
 
     var oic = new OIC();
     module.exports = oic;

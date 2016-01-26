@@ -27,12 +27,20 @@ exports.defineAutoTests = function() {
             });
         });
 
+        it('setting onresourcefound works', function() {
+            expect(oic.onresourcefound).toBeDefined();
+            oic.onresourcefound = function(event) { return "foo"; }
+            expect(oic.onresourcefound()).toBe("foo");
+        });
+
         it('findResources works', function(done) {
             expect(oic.findResources).toBeDefined();
             oic.setBackend("mock").then(function() {
-                oic.findResources().then(function success(data) {
-                    expect(data).toBeDefined();
+                oic.onresourcefound = function(event) {
                     done();
+                }
+                oic.findResources().then(function success() {
+                    expect(true).toBe(true);
                 });
             });
         });
