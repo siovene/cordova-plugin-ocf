@@ -44,5 +44,26 @@ exports.defineAutoTests = function() {
                 });
             });
         });
+
+        it('findResources with options works', function(done) {
+            var options = {
+                deviceId: "127.0.0.1",
+                resourceType: "test"
+            };
+
+            expect(oic.findResources).toBeDefined();
+            oic.setBackend("mock").then(function() {
+                oic.onresourcefound = function(result) {
+                    var obj = JSON.parse(result)[0];
+                    expect(obj.deviceId).toBe(options.deviceId);
+                    expect(obj.resourceType).toBe(options.resourceType);
+                    done();
+                }
+                oic.findResources(options).then(function success() {
+                    expect(true).toBe(true);
+                });
+            });
+        });
+
     });
 };

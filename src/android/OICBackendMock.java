@@ -13,7 +13,7 @@ import org.json.JSONArray;
 
 public class OICBackendMock implements OICBackendInterface {
     public void findResources(JSONArray args, CallbackContext cc) {
-        PluginResult result = new PluginResult(PluginResult.Status.OK, "fake event");
+        PluginResult result = new PluginResult(PluginResult.Status.OK, args.toString());
         result.setKeepCallback(true);
         cc.sendPluginResult(result);
     }
