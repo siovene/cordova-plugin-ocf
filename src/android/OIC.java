@@ -28,7 +28,9 @@ public class OIC extends CordovaPlugin {
         }
     }
 
-    private void findResources(JSONArray args, CallbackContext cc) {
+    private void findResources(JSONArray args, CallbackContext cc)
+        throws JSONException
+    {
         this.backend.findResources(args, cc);
     }
 

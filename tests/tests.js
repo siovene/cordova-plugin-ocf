@@ -53,10 +53,11 @@ exports.defineAutoTests = function() {
 
             expect(oic.findResources).toBeDefined();
             oic.setBackend("mock").then(function() {
-                oic.onresourcefound = function(result) {
-                    var obj = JSON.parse(result)[0];
-                    expect(obj.deviceId).toBe(options.deviceId);
-                    expect(obj.resourceType).toBe(options.resourceType);
+                oic.onresourcefound = function(event) {
+                    expect(event).toBeDefined()
+                    expect(event.resource).toBeDefined();
+                    expect(event.resource.deviceId).toBe(options.deviceId);
+                    expect(event.resource.resourceType).toBe(options.resourceType);
                     done();
                 }
                 oic.findResources(options).then(function success() {

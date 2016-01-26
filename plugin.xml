@@ -21,6 +21,10 @@
         <source-file src="src/android/OICBackendMock.java" target-dir="src/" />
         <source-file src="src/android/OICInvalidBackendException.java" target-dir="src/" />
 
+        <source-file src="src/android/OICObjectInterface.java" target-dir="src/" />
+        <source-file src="src/android/OICResourceEvent.java" target-dir="src/" />
+        <source-file src="src/android/OICResource.java" target-dir="src/" />
+
         <framework src="src/android/oic.gradle" custom="true" type="gradleReference" />
         <resource-file src="libs/iotivity-base-x86-release.aar" target="libs/iotivity-base-x86-release.aar" />
     </platform>
