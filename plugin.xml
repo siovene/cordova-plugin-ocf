@@ -19,6 +19,7 @@
         <source-file src="src/android/OIC.java" target-dir="src/" />
         <source-file src="src/android/OICBackendInterface.java" target-dir="src/" />
         <source-file src="src/android/OICBackendMock.java" target-dir="src/" />
+        <source-file src="src/android/OICBackendIotivity.java" target-dir="src/" />
         <source-file src="src/android/OICInvalidBackendException.java" target-dir="src/" />
 
         <source-file src="src/android/OICObjectInterface.java" target-dir="src/" />

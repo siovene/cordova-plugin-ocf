@@ -15,7 +15,7 @@ import org.json.JSONException;
 
 public class OIC extends CordovaPlugin {
     static final String TAG = "OIC";
-    private OICBackendInterface backend = new OICBackendMock();
+    private OICBackendInterface backend = new OICBackendIotivity();
 
     private void setBackend(JSONArray args)
         throws JSONException, OICInvalidBackendException
@@ -23,6 +23,8 @@ public class OIC extends CordovaPlugin {
         String type = args.getString(0);
         if (type.equals("mock")) {
             this.backend = new OICBackendMock();
+        } else if (type.equals("iotivity")) {
+            this.backend = new OICBackendIotivity();
         } else {
             throw new OICInvalidBackendException(type);
         }
