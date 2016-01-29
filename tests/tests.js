@@ -48,6 +48,7 @@ exports.defineAutoTests = function() {
         it('findResources with options works', function(done) {
             var options = {
                 deviceId: "127.0.0.1",
+                resourcePath: "/",
                 resourceType: "test"
             };
 
@@ -57,6 +58,7 @@ exports.defineAutoTests = function() {
                     expect(event).toBeDefined()
                     expect(event.resource).toBeDefined();
                     expect(event.resource.deviceId).toBe(options.deviceId);
+                    expect(event.resource.resourcePath).toBe(options.resourcePath);
                     expect(event.resource.resourceType).toBe(options.resourceType);
                     done();
                 }
