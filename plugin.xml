@@ -26,6 +26,6 @@
         <source-file src="src/android/OICResource.java" target-dir="src/" />
 
         <framework src="src/android/oic.gradle" custom="true" type="gradleReference" />
-        <resource-file src="libs/iotivity-base-x86-release.aar" target="libs/iotivity-base-x86-release.aar" />
+        <resource-file src="libs/iotivity-1.0.1.aar" target="libs/iotivity-1.0.1.aar" />
     </platform>
 </plugin>

@@ -1,12 +1,11 @@
 repositories{    
-  jcenter()
   flatDir{
       dirs 'libs'
    }
 }
 
 dependencies {
-   compile(name:'iotivity-base-x86-release', ext:'aar')
+   compile 'org.iotivity:iotivity:1.0.1@aar'
 }
 
 android {
