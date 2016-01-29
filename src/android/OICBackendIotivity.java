@@ -9,14 +9,18 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
 
 // Android
+import android.content.Context;
 import android.util.Log;
 
 // Iotivity
+import org.iotivity.base.ModeType;
 import org.iotivity.base.OcConnectivityType;
 import org.iotivity.base.OcException;
 import org.iotivity.base.OcPlatform;
 import org.iotivity.base.OcResource;
+import org.iotivity.base.PlatformConfig;
 import org.iotivity.base.QualityOfService;
+import org.iotivity.base.ServiceType;
 
 // Third party
 import org.json.JSONArray;
@@ -28,6 +32,18 @@ public class OICBackendIotivity
                OcPlatform.OnResourceFoundListener
 {
     private CallbackContext callbackContext;
+
+    public OICBackendIotivity(Context context) {
+        PlatformConfig platformConfig = new PlatformConfig(
+            context,
+            ServiceType.IN_PROC,
+            ModeType.CLIENT,
+            "0.0.0.0", // By setting to "0.0.0.0", it binds to all available interfaces
+            0,         // Uses randomly available port
+            QualityOfService.LOW
+        );
+        OcPlatform.Configure(platformConfig);
+    }
 
     public void onResourceFound(OcResource resource) {
         String deviceId = resource.getHost();
@@ -61,7 +77,8 @@ public class OICBackendIotivity
 
         try {
             OcPlatform.findResource(
-                host, resourceUri,
+                host,
+                OcPlatform.WELL_KNOWN_QUERY + "?rt=" + resourceUri,
                 EnumSet.of(OcConnectivityType.CT_DEFAULT),
                 this);
         } catch (OcException ex) {

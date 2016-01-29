@@ -6,6 +6,7 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 
 // Android
+import android.content.Context;
 import android.util.Log;
 
 // Third party
@@ -15,16 +16,20 @@ import org.json.JSONException;
 
 public class OIC extends CordovaPlugin {
     static final String TAG = "OIC";
-    private OICBackendInterface backend = new OICBackendIotivity();
+    private OICBackendInterface backend;
+
+    private Context getContext() {
+        return this.cordova.getActivity().getApplicationContext();
+    }
 
     private void setBackend(JSONArray args)
         throws JSONException, OICInvalidBackendException
     {
         String type = args.getString(0);
         if (type.equals("mock")) {
-            this.backend = new OICBackendMock();
+            this.backend = new OICBackendMock(getContext());
         } else if (type.equals("iotivity")) {
-            this.backend = new OICBackendIotivity();
+            this.backend = new OICBackendIotivity(getContext());
         } else {
             throw new OICInvalidBackendException(type);
         }

@@ -5,6 +5,7 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
 
 // Android
+import android.content.Context;
 import android.util.Log;
 
 // Third party
@@ -13,6 +14,9 @@ import org.json.JSONException;
 
 
 public class OICBackendMock implements OICBackendInterface {
+    public OICBackendMock(Context context) {
+    }
+
     public void findResources(JSONArray args, CallbackContext cc)
             throws JSONException {
         String deviceId;

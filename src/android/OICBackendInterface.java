@@ -1,5 +1,8 @@
 package com.intel.cordova.plugin.oic;
 
+// Android
+import android.content.Context;
+
 // Cordova
 import org.apache.cordova.CallbackContext;
 
