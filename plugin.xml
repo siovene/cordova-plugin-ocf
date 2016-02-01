@@ -24,6 +24,7 @@
 
         <source-file src="src/android/OICObjectInterface.java" target-dir="src/" />
         <source-file src="src/android/OICResourceEvent.java" target-dir="src/" />
+        <source-file src="src/android/OICResourceId.java" target-dir="src/" />
         <source-file src="src/android/OICResource.java" target-dir="src/" />
 
         <framework src="src/android/oic.gradle" custom="true" type="gradleReference" />

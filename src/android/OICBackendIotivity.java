@@ -1,6 +1,7 @@
 package com.intel.cordova.plugin.oic;
 
 // Java
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -48,14 +49,11 @@ public class OICBackendIotivity
     public void onResourceFound(OcResource resource) {
         String deviceId = resource.getHost();
         String resourcePath = resource.getUri();
-        List<String> resourceTypes = resource.getResourceTypes();
-        String resourceType = "";
 
-        if (resourceTypes.size() > 0) {
-            resourceType = resourceTypes.get(0);
-        }
+        OICResourceId id = new OICResourceId(deviceId, resourcePath);
 
-        OICResource oicResource = new OICResource(deviceId, resourcePath, resourceType);
+        ArrayList<String> resourceTypes = new ArrayList<String> (resource.getResourceTypes());
+        OICResource oicResource = new OICResource(id, resourceTypes);
         OICResourceEvent ev = new OICResourceEvent(oicResource);
 
         try {

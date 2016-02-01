@@ -1,5 +1,8 @@
 package com.intel.cordova.plugin.oic;
 
+// Java
+import java.util.ArrayList;
+
 // Cordova
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
@@ -21,20 +24,28 @@ public class OICBackendMock implements OICBackendInterface {
             throws JSONException {
         String deviceId;
         String resourcePath;
-        String resourceType;
+        ArrayList<String> resourceTypes;
+        JSONArray resourceTypesJson;
+
+        resourceTypes = new ArrayList<String>();
 
         try {
             deviceId = args.getJSONObject(0).getString("deviceId");
             resourcePath = args.getJSONObject(0).getString("resourcePath");
-            resourceType = args.getJSONObject(0).getString("resourceType");
+            resourceTypesJson = args.getJSONObject(0).getJSONArray("resourceTypes");
+            if (resourceTypesJson != null) {
+                for (int i = 0; i < resourceTypesJson.length(); i++) {
+                    resourceTypes.add(resourceTypesJson.getString(i));
+                }
+            }
         } catch (JSONException ex) {
             deviceId = "";
             resourcePath = "";
-            resourceType = "";
         }
 
         // Create dummy resource event
-        OICResource res = new OICResource(deviceId, resourcePath, resourceType);
+        OICResourceId id = new OICResourceId(deviceId, resourcePath);
+        OICResource res = new OICResource(id, resourceTypes);
         OICResourceEvent ev = new OICResourceEvent(res);
         PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
         result.setKeepCallback(true);

@@ -49,7 +49,7 @@ exports.defineAutoTests = function() {
             var options = {
                 deviceId: "127.0.0.1",
                 resourcePath: "/",
-                resourceType: "test"
+                resourceTypes: ["test1"]
             };
 
             expect(oic.findResources).toBeDefined();
@@ -57,9 +57,9 @@ exports.defineAutoTests = function() {
                 oic.onresourcefound = function(event) {
                     expect(event).toBeDefined()
                     expect(event.resource).toBeDefined();
-                    expect(event.resource.deviceId).toBe(options.deviceId);
-                    expect(event.resource.resourcePath).toBe(options.resourcePath);
-                    expect(event.resource.resourceType).toBe(options.resourceType);
+                    expect(event.resource.id.deviceId).toBe(options.deviceId);
+                    expect(event.resource.id.resourcePath).toBe(options.resourcePath);
+                    expect(event.resource.resourceTypes).toEqual(options.resourceTypes);
                     done();
                 }
                 oic.findResources(options).then(function success() {
