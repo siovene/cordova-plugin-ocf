@@ -2,26 +2,6 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
     var exec = require("cordova/exec");
 
     /**************************************************************************
-    *  OICBackend                                                             *
-    *  Base class for backend implementations.                                *
-    **************************************************************************/
-    function OICBackend(type) {
-        this.type = type;
-    };
-
-
-    /**************************************************************************
-    *  OICBackendMock                                                         *
-    *  Backend implementation that mocks things, for unit testing.            *
-    **************************************************************************/
-    OICBackendMock.prototype = new OICBackend();
-    OICBackendMock.prototype.constructor = OICBackendMock;
-    function OICBackendMock() {
-        this.type = "mock";
-    }
-
-
-    /**************************************************************************
     *  OIC                                                                    *
     *  The Cordova plugin.                                                    *
     **************************************************************************/
