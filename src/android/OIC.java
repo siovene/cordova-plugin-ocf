@@ -56,6 +56,7 @@ public class OIC extends CordovaPlugin {
             } else if ("findResources".equals(action)) {
                 this.findResources(args, cc);
                 PluginResult result = new PluginResult(PluginResult.Status.OK);
+                result.setKeepCallback(true);
                 cc.sendPluginResult(result);
             } else {
                 Log.e(TAG, "Unknown action: " + action);
