@@ -10,11 +10,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class OICResource implements OICObjectInterface {
-    public OICResourceId id;
+public class OicResource implements OicObjectInterface {
+    public OicResourceId id;
     public ArrayList<String> resourceTypes;
 
-    public OICResource(OICResourceId id, ArrayList<String> resourceTypes) {
+    public OicResource(OicResourceId id, ArrayList<String> resourceTypes) {
         this.id = id;
         this.resourceTypes = new ArrayList<String>(resourceTypes);
     }

@@ -2,14 +2,14 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
     var exec = require("cordova/exec");
 
     /**************************************************************************
-    *  OIC                                                                    *
+    *  OicPlugin                                                              *
     *  The Cordova plugin.                                                    *
     **************************************************************************/
-    var OIC = function() {
+    var OicPlugin = function() {
         this.backend = "iotivity";
     }
 
-    OIC.prototype.setBackend = function(backend) {
+    OicPlugin.prototype.setBackend = function(backend) {
         var self = this;
 
         return new Promise(function(resolve, reject) {
@@ -22,12 +22,12 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
                 reject(error);
             }
 
-            exec(successCallback, errorCallback, "OIC", "setBackend",
+            exec(successCallback, errorCallback, "OicPlugin", "setBackend",
                  [backend]);
         });
     }
 
-    OIC.prototype.findResources = function(options) {
+    OicPlugin.prototype.findResources = function(options) {
         var self = this;
 
         if (options === undefined) {
@@ -49,13 +49,13 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
                 reject(error);
             }
 
-            exec(successCallback, errorCallback, "OIC", "findResources",
+            exec(successCallback, errorCallback, "OicPlugin", "findResources",
                  [options]);
         });
     };
 
-    OIC.prototype.onresourcefound = function(event) {};
+    OicPlugin.prototype.onresourcefound = function(event) {};
 
-    var oic = new OIC();
+    var oic = new OicPlugin();
     module.exports = oic;
 });

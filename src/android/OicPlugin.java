@@ -14,24 +14,24 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 
-public class OIC extends CordovaPlugin {
-    static final String TAG = "OIC";
-    private OICBackendInterface backend;
+public class OicPlugin extends CordovaPlugin {
+    static final String TAG = "OicPlugin";
+    private OicBackendInterface backend;
 
     private Context getContext() {
         return this.cordova.getActivity().getApplicationContext();
     }
 
     private void setBackend(JSONArray args)
-        throws JSONException, OICInvalidBackendException
+        throws JSONException, OicInvalidBackendException
     {
         String type = args.getString(0);
         if (type.equals("mock")) {
-            this.backend = new OICBackendMock(getContext());
+            this.backend = new OicBackendMock(getContext());
         } else if (type.equals("iotivity")) {
-            this.backend = new OICBackendIotivity(getContext());
+            this.backend = new OicBackendIotivity(getContext());
         } else {
-            throw new OICInvalidBackendException(type);
+            throw new OicInvalidBackendException(type);
         }
     }
 
@@ -50,7 +50,7 @@ public class OIC extends CordovaPlugin {
                 try {
                     this.setBackend(args);
                     cc.success();
-                } catch (OICInvalidBackendException e) {
+                } catch (OicInvalidBackendException e) {
                     cc.error(e.getMessage());
                 }
             } else if ("findResources".equals(action)) {

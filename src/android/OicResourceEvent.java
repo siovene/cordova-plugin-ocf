@@ -5,10 +5,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class OICResourceEvent implements OICObjectInterface {
-    public OICResource resource;
+public class OicResourceEvent implements OicObjectInterface {
+    public OicResource resource;
 
-    public OICResourceEvent(OICResource resource) {
+    public OicResourceEvent(OicResource resource) {
         this.resource = resource;
     }
 

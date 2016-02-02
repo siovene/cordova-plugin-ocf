@@ -2,7 +2,7 @@
 <plugin
         xmlns="http://apache.org/cordova/ns/plugins/1.0"
         id="cordova-plugin-oic" version="0.1.0">
-    <name>OIC</name>
+    <name>OicPlugin</name>
     <description>Cordova OIC Plugin</description>
     <license>Apache 2.0</license>
     <js-module src="www/oic.js" name="oic">
@@ -11,21 +11,23 @@
 
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="OIC">
-                <param name="android-package" value="com.intel.cordova.plugin.oic.OIC"/>
+            <feature name="OicPlugin">
+                <param
+                    name="android-package"
+                    value="com.intel.cordova.plugin.oic.OicPlugin"/>
             </feature>
         </config-file>
 
-        <source-file src="src/android/OIC.java" target-dir="src/" />
-        <source-file src="src/android/OICBackendInterface.java" target-dir="src/" />
-        <source-file src="src/android/OICBackendMock.java" target-dir="src/" />
-        <source-file src="src/android/OICBackendIotivity.java" target-dir="src/" />
-        <source-file src="src/android/OICInvalidBackendException.java" target-dir="src/" />
+        <source-file src="src/android/OicPlugin.java" target-dir="src/" />
+        <source-file src="src/android/OicBackendInterface.java" target-dir="src/" />
+        <source-file src="src/android/OicBackendMock.java" target-dir="src/" />
+        <source-file src="src/android/OicBackendIotivity.java" target-dir="src/" />
+        <source-file src="src/android/OicInvalidBackendException.java" target-dir="src/" />
 
-        <source-file src="src/android/OICObjectInterface.java" target-dir="src/" />
-        <source-file src="src/android/OICResourceEvent.java" target-dir="src/" />
-        <source-file src="src/android/OICResourceId.java" target-dir="src/" />
-        <source-file src="src/android/OICResource.java" target-dir="src/" />
+        <source-file src="src/android/OicObjectInterface.java" target-dir="src/" />
+        <source-file src="src/android/OicResourceEvent.java" target-dir="src/" />
+        <source-file src="src/android/OicResourceId.java" target-dir="src/" />
+        <source-file src="src/android/OicResource.java" target-dir="src/" />
 
         <framework src="src/android/oic.gradle" custom="true" type="gradleReference" />
         <resource-file src="libs/iotivity-1.0.1.aar" target="libs/iotivity-1.0.1.aar" />

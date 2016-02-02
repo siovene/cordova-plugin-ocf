@@ -5,6 +5,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public interface OICObjectInterface {
+public interface OicObjectInterface {
     public JSONObject toJSON() throws JSONException;
 }

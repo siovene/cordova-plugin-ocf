@@ -28,13 +28,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 
-public class OICBackendIotivity
-    implements OICBackendInterface,
+public class OicBackendIotivity
+    implements OicBackendInterface,
                OcPlatform.OnResourceFoundListener
 {
     private CallbackContext callbackContext;
 
-    public OICBackendIotivity(Context context) {
+    public OicBackendIotivity(Context context) {
         PlatformConfig platformConfig = new PlatformConfig(
             context,
             ServiceType.IN_PROC,
@@ -50,11 +50,11 @@ public class OICBackendIotivity
         String deviceId = resource.getHost();
         String resourcePath = resource.getUri();
 
-        OICResourceId id = new OICResourceId(deviceId, resourcePath);
+        OicResourceId id = new OicResourceId(deviceId, resourcePath);
 
         ArrayList<String> resourceTypes = new ArrayList<String> (resource.getResourceTypes());
-        OICResource oicResource = new OICResource(id, resourceTypes);
-        OICResourceEvent ev = new OICResourceEvent(oicResource);
+        OicResource oicResource = new OicResource(id, resourceTypes);
+        OicResourceEvent ev = new OicResourceEvent(oicResource);
 
         try {
             PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());

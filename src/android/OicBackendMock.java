@@ -16,8 +16,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 
-public class OICBackendMock implements OICBackendInterface {
-    public OICBackendMock(Context context) {
+public class OicBackendMock implements OicBackendInterface {
+    public OicBackendMock(Context context) {
     }
 
     public void findResources(JSONArray args, CallbackContext cc)
@@ -44,9 +44,9 @@ public class OICBackendMock implements OICBackendInterface {
         }
 
         // Create dummy resource event
-        OICResourceId id = new OICResourceId(deviceId, resourcePath);
-        OICResource res = new OICResource(id, resourceTypes);
-        OICResourceEvent ev = new OICResourceEvent(res);
+        OicResourceId id = new OicResourceId(deviceId, resourcePath);
+        OicResource res = new OicResource(id, resourceTypes);
+        OicResourceEvent ev = new OicResourceEvent(res);
         PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
         result.setKeepCallback(true);
         cc.sendPluginResult(result);

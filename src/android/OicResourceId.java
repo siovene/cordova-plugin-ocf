@@ -5,11 +5,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class OICResourceId implements OICObjectInterface {
+public class OicResourceId implements OicObjectInterface {
     public String deviceId;
     public String resourcePath;
 
-    public OICResourceId(String deviceId, String resourcePath) {
+    public OicResourceId(String deviceId, String resourcePath) {
         this.deviceId = deviceId;
         this.resourcePath = resourcePath;
     }
