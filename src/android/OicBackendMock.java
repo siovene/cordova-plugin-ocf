@@ -17,7 +17,7 @@ import org.json.JSONException;
 
 
 public class OicBackendMock implements OicBackendInterface {
-    public OicBackendMock(Context context) {
+    public OicBackendMock(OicPlugin plugin) {
     }
 
     public void findResources(JSONArray args, CallbackContext cc)

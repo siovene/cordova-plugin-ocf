@@ -42,9 +42,14 @@ public class OicBackendIotivity
     private static final String OC_RSRVD_SPEC_VERSION = "lcv";
     private static final String OC_RSRVD_DATA_MODEL_VERSION = "dmv";
 
-    public OicBackendIotivity(Context context) {
+    private OicPlugin plugin;
+    private CallbackContext callbackContext;
+
+    public OicBackendIotivity(OicPlugin plugin) {
+        this.plugin = plugin;
+
         PlatformConfig platformConfig = new PlatformConfig(
-            context,
+            plugin.cordova.getActivity().getApplicationContext(),
             ServiceType.IN_PROC,
             ModeType.CLIENT,
             "0.0.0.0", // By setting to "0.0.0.0", it binds to all available interfaces
@@ -89,19 +94,13 @@ public class OicBackendIotivity
     }
 
     @Override
-    public void onResourceFound(OcResource resource) {
-        String deviceId = resource.getHost();
+    public synchronized void onResourceFound(OcResource resource) {
         String resourcePath = resource.getUri();
+        if (resourcePath.equals("/oic/p") || resourcePath.equals("/oic/d")) {
+            return;
+        }
 
-        OicResourceId id = new OicResourceId(deviceId, resourcePath);
-
-        ArrayList<String> resourceTypes = new ArrayList<String> (resource.getResourceTypes());
-        ArrayList<String> interfaces = new ArrayList<String> (resource.getResourceInterfaces());
-
-        OicResource oicResource = new OicResource(id);
-        oicResource.setResourceTypes(resourceTypes);
-        oicResource.setInterfaces(interfaces);
-        oicResource.setMediaTypes(new ArrayList<String>()); // Not implemented by Iotivity
+        OicResource oicResource = new OicResource(resource);
         OicResourceEvent ev = new OicResourceEvent(oicResource);
 
         try {

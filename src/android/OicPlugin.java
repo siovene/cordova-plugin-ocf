@@ -18,18 +18,14 @@ public class OicPlugin extends CordovaPlugin {
     static final String TAG = "OicPlugin";
     private OicBackendInterface backend;
 
-    private Context getContext() {
-        return this.cordova.getActivity().getApplicationContext();
-    }
-
     private void setBackend(JSONArray args)
         throws JSONException, OicInvalidBackendException
     {
         String type = args.getString(0);
         if (type.equals("mock")) {
-            this.backend = new OicBackendMock(getContext());
+            this.backend = new OicBackendMock(null);
         } else if (type.equals("iotivity")) {
-            this.backend = new OicBackendIotivity(getContext());
+            this.backend = new OicBackendIotivity(this);
         } else {
             throw new OicInvalidBackendException(type);
         }
