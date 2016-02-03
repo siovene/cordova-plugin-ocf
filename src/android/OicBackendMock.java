@@ -24,9 +24,9 @@ public class OicBackendMock implements OicBackendInterface {
             throws JSONException {
         String deviceId;
         String resourcePath;
+
         ArrayList<String> resourceTypes;
         JSONArray resourceTypesJson;
-
         resourceTypes = new ArrayList<String>();
 
         try {
@@ -43,9 +43,13 @@ public class OicBackendMock implements OicBackendInterface {
             resourcePath = "";
         }
 
-        // Create dummy resource event
-        OicResourceId id = new OicResourceId(deviceId, resourcePath);
-        OicResource res = new OicResource(id, resourceTypes);
+        OicResource res = new OicResource(deviceId, resourcePath);
+        res.setResourceTypes(resourceTypes);
+        res.setInterfaces(new ArrayList<String>() {{
+            add("iface1");
+            add("iface2");
+        }});
+
         OicResourceEvent ev = new OicResourceEvent(res);
         PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
         result.setKeepCallback(true);

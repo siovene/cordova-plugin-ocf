@@ -60,6 +60,7 @@ exports.defineAutoTests = function() {
                     expect(event.resource.id.deviceId).toBe(options.deviceId);
                     expect(event.resource.id.resourcePath).toBe(options.resourcePath);
                     expect(event.resource.resourceTypes).toEqual(options.resourceTypes);
+                    expect(event.resource.interfaces).toEqual(['iface1', 'iface2']);
                     done();
                 }
                 oic.findResources(options).then(function success() {

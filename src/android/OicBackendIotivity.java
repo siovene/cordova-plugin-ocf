@@ -53,7 +53,11 @@ public class OicBackendIotivity
         OicResourceId id = new OicResourceId(deviceId, resourcePath);
 
         ArrayList<String> resourceTypes = new ArrayList<String> (resource.getResourceTypes());
-        OicResource oicResource = new OicResource(id, resourceTypes);
+        ArrayList<String> interfaces = new ArrayList<String> (resource.getResourceInterfaces());
+
+        OicResource oicResource = new OicResource(id);
+        oicResource.setResourceTypes(resourceTypes);
+        oicResource.setInterfaces(interfaces);
         OicResourceEvent ev = new OicResourceEvent(oicResource);
 
         try {

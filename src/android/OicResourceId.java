@@ -6,8 +6,8 @@ import org.json.JSONObject;
 
 
 public class OicResourceId implements OicObjectInterface {
-    public String deviceId;
-    public String resourcePath;
+    private String deviceId;
+    private String resourcePath;
 
     public OicResourceId(String deviceId, String resourcePath) {
         this.deviceId = deviceId;
