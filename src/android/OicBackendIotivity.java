@@ -58,6 +58,7 @@ public class OicBackendIotivity
         OicResource oicResource = new OicResource(id);
         oicResource.setResourceTypes(resourceTypes);
         oicResource.setInterfaces(interfaces);
+        oicResource.setMediaTypes(new ArrayList<String>()); // Not implemented by Iotivity
         OicResourceEvent ev = new OicResourceEvent(oicResource);
 
         try {

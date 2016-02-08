@@ -49,6 +49,10 @@ public class OicBackendMock implements OicBackendInterface {
             add("iface1");
             add("iface2");
         }});
+        res.setMediaTypes(new ArrayList<String>() {{
+            add("mediaType1");
+            add("mediaType2");
+        }});
 
         OicResourceEvent ev = new OicResourceEvent(res);
         PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
