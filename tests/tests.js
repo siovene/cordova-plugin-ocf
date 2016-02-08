@@ -70,5 +70,31 @@ exports.defineAutoTests = function() {
             });
         });
 
+        it('setting ondevicefound works', function() {
+            expect(oic.ondevicefound).toBeDefined();
+            oic.ondevicefound = function(event) { return "foo"; }
+            expect(oic.ondevicefound()).toBe("foo");
+        });
+
+        it('findDevices works', function(done) {
+            expect(oic.findDevices).toBeDefined();
+            oic.setBackend("mock").then(function() {
+                oic.ondevicefound = function(event) {
+                    expect(event).toBeDefined();
+                    expect(event.device).toBeDefined();
+                    expect(event.device.uuid).toBe("1234567890");
+                    expect(event.device.url).toBe("http://example.com/");
+                    expect(event.device.name).toBe("Device name");
+                    expect(event.device.dataModels).toEqual(['data1', 'data2']);
+                    expect(event.device.coreSpecVersion).toBe("0.1.0");
+                    expect(event.device.role).toBe("server");
+                    done();
+                }
+                oic.findDevices().then(function success() {
+                    expect(true).toBe(true);
+                });
+            });
+        });
+
     });
 };

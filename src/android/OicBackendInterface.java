@@ -14,4 +14,5 @@ import org.json.JSONException;
 public interface OicBackendInterface {
     public void findResources(JSONArray args, CallbackContext cc)
         throws JSONException;
+    public void findDevices(CallbackContext cc) throws JSONException;
 }

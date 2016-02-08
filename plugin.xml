@@ -28,6 +28,8 @@
         <source-file src="src/android/OicResourceEvent.java" target-dir="src/" />
         <source-file src="src/android/OicResourceId.java" target-dir="src/" />
         <source-file src="src/android/OicResource.java" target-dir="src/" />
+        <source-file src="src/android/OicDeviceEvent.java" target-dir="src/" />
+        <source-file src="src/android/OicDevice.java" target-dir="src/" />
 
         <framework src="src/android/oic.gradle" custom="true" type="gradleReference" />
         <resource-file src="libs/iotivity-1.0.1.aar" target="libs/iotivity-1.0.1.aar" />

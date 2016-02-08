@@ -54,7 +54,30 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
         });
     };
 
+    OicPlugin.prototype.findDevices = function() {
+        var self = this;
+
+        return new Promise(function(resolve, reject) {
+            function successCallback(event) {
+                if (event === "OK") {
+                    // No event: this is just the native call completing.
+                    resolve();
+                } else {
+                    // Event passed: this is a "device found" callback.
+                    self.ondevicefound(event);
+                }
+            }
+
+            function errorCallback(error) {
+                reject(error);
+            }
+
+            exec(successCallback, errorCallback, "OicPlugin", "findDevices", []);
+        });
+    };
+
     OicPlugin.prototype.onresourcefound = function(event) {};
+    OicPlugin.prototype.ondevicefound = function(event) {};
 
     var oic = new OicPlugin();
     module.exports = oic;

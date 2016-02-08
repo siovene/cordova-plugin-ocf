@@ -88,4 +88,7 @@ public class OicBackendIotivity
             this.callbackContext.error(ex.getMessage());
         }
     }
+
+    public void findDevices(CallbackContext cc) throws JSONException {
+    }
 }
