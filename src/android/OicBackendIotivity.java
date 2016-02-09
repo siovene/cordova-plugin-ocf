@@ -40,6 +40,7 @@ public class OicBackendIotivity
     private static final String OC_RSRVD_DEVICE_ID = "di";
     private static final String OC_RSRVD_DEVICE_NAME = "n";
     private static final String OC_RSRVD_SPEC_VERSION = "lcv";
+    private static final String OC_RSRVD_DATA_MODEL_VERSION = "dmv";
 
     public OicBackendIotivity(Context context) {
         PlatformConfig platformConfig = new PlatformConfig(
@@ -54,12 +55,15 @@ public class OicBackendIotivity
     }
 
     @Override
-    public void onDeviceFound(OcRepresentation repr) {
+    public void onDeviceFound(final OcRepresentation repr) {
         OicDevice device = new OicDevice();
         try {
             device.setUuid((String) repr.getValue(OC_RSRVD_DEVICE_ID));
             device.setName((String) repr.getValue(OC_RSRVD_DEVICE_NAME));
             device.setCoreSpecVersion((String) repr.getValue(OC_RSRVD_SPEC_VERSION));
+            device.setDataModels(new ArrayList<String>() {{
+                add((String) repr.getValue(OC_RSRVD_DATA_MODEL_VERSION));
+            }});
         } catch (OcException ex) {
             Log.e("OIC", "Error reading OcRepresentation");
         }
