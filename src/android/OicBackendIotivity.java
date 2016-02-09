@@ -18,6 +18,7 @@ import org.iotivity.base.ModeType;
 import org.iotivity.base.OcConnectivityType;
 import org.iotivity.base.OcException;
 import org.iotivity.base.OcPlatform;
+import org.iotivity.base.OcRepresentation;
 import org.iotivity.base.OcResource;
 import org.iotivity.base.PlatformConfig;
 import org.iotivity.base.QualityOfService;
@@ -30,9 +31,15 @@ import org.json.JSONException;
 
 public class OicBackendIotivity
     implements OicBackendInterface,
+               OcPlatform.OnDeviceFoundListener,
                OcPlatform.OnResourceFoundListener
 {
-    private CallbackContext callbackContext;
+    private CallbackContext findDevicesCallbackContext;
+    private CallbackContext findResourcesCallbackContext;
+
+    private static final String OC_RSRVD_DEVICE_ID = "di";
+    private static final String OC_RSRVD_DEVICE_NAME = "n";
+    private static final String OC_RSRVD_SPEC_VERSION = "lcv";
 
     public OicBackendIotivity(Context context) {
         PlatformConfig platformConfig = new PlatformConfig(
@@ -46,6 +53,38 @@ public class OicBackendIotivity
         OcPlatform.Configure(platformConfig);
     }
 
+    @Override
+    public void onDeviceFound(OcRepresentation repr) {
+        OicDevice device = new OicDevice();
+        try {
+            device.setUuid((String) repr.getValue(OC_RSRVD_DEVICE_ID));
+            device.setName((String) repr.getValue(OC_RSRVD_DEVICE_NAME));
+            device.setCoreSpecVersion((String) repr.getValue(OC_RSRVD_SPEC_VERSION));
+        } catch (OcException ex) {
+            Log.e("OIC", "Error reading OcRepresentation");
+        }
+
+        OicDeviceEvent ev = new OicDeviceEvent(device);
+        try {
+            PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
+            result.setKeepCallback(true);
+            this.findDevicesCallbackContext.sendPluginResult(result);
+        } catch (JSONException ex) {
+            this.findDevicesCallbackContext.error(ex.getMessage());
+        }
+    }
+
+    public void findDevices(CallbackContext cc) throws JSONException {
+        this.findDevicesCallbackContext = cc;
+        try {
+            OcPlatform.getDeviceInfo(
+                "", "/oic/d", EnumSet.of(OcConnectivityType.CT_DEFAULT), this);
+        } catch (OcException ex) {
+            this.findDevicesCallbackContext.error(ex.getMessage());
+        }
+    }
+
+    @Override
     public void onResourceFound(OcResource resource) {
         String deviceId = resource.getHost();
         String resourcePath = resource.getUri();
@@ -64,9 +103,9 @@ public class OicBackendIotivity
         try {
             PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
             result.setKeepCallback(true);
-            this.callbackContext.sendPluginResult(result);
+            this.findResourcesCallbackContext.sendPluginResult(result);
         } catch (JSONException ex) {
-            this.callbackContext.error(ex.getMessage());
+            this.findResourcesCallbackContext.error(ex.getMessage());
         }
     }
 
@@ -76,7 +115,7 @@ public class OicBackendIotivity
         String host = args.getJSONObject(0).getString("deviceId");
         String resourceUri = args.getJSONObject(0).getString("resourcePath");
 
-        this.callbackContext = cc;
+        this.findResourcesCallbackContext = cc;
 
         try {
             OcPlatform.findResource(
@@ -85,10 +124,7 @@ public class OicBackendIotivity
                 EnumSet.of(OcConnectivityType.CT_DEFAULT),
                 this);
         } catch (OcException ex) {
-            this.callbackContext.error(ex.getMessage());
+            this.findResourcesCallbackContext.error(ex.getMessage());
         }
-    }
-
-    public void findDevices(CallbackContext cc) throws JSONException {
     }
 }
