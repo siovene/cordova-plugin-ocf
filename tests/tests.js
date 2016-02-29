@@ -62,6 +62,9 @@ exports.defineAutoTests = function() {
                     expect(event.resource.resourceTypes).toEqual(options.resourceTypes);
                     expect(event.resource.interfaces).toEqual(['iface1', 'iface2']);
                     expect(event.resource.mediaTypes).toEqual(['mediaType1', 'mediaType2']);
+                    expect(event.resource.properties).toBeDefined();
+                    expect(event.resource.properties.some_int).toBe(1);
+                    expect(event.resource.properties.some_string).toBe("s");
                     done();
                 }
                 oic.findResources(options).then(function success() {

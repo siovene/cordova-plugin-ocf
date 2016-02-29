@@ -28,6 +28,7 @@
         <source-file src="src/android/OicResourceEvent.java" target-dir="src/" />
         <source-file src="src/android/OicResourceId.java" target-dir="src/" />
         <source-file src="src/android/OicResource.java" target-dir="src/" />
+        <source-file src="src/android/OicResourceRepresentation.java" target-dir="src/" />
         <source-file src="src/android/OicDeviceEvent.java" target-dir="src/" />
         <source-file src="src/android/OicDevice.java" target-dir="src/" />
 

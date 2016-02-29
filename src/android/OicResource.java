@@ -19,13 +19,16 @@ public class OicResource implements OicObjectInterface
     private ArrayList<String> resourceTypes;
     private ArrayList<String> interfaces;
     private ArrayList<String> mediaTypes;
+    private OicResourceRepresentation properties;
 
     public OicResource(OicResourceId id) {
         this.id = id;
+        this.properties = new OicResourceRepresentation();
     }
 
     public OicResource(String deviceId, String resourcePath) {
         this.id = new OicResourceId(deviceId, resourcePath);
+        this.properties = new OicResourceRepresentation();
     }
 
     public void finalize() {
@@ -44,12 +47,17 @@ public class OicResource implements OicObjectInterface
         this.mediaTypes = new ArrayList<String>(mediaTypes);
     }
 
+    public void setProperty(String key, Object value) {
+        this.properties.setValue(key, value);
+    }
+
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
         o.put("id", this.id.toJSON());
         o.put("resourceTypes", new JSONArray(this.resourceTypes));
         o.put("interfaces", new JSONArray(this.interfaces));
         o.put("mediaTypes", new JSONArray(this.mediaTypes));
+        o.put("properties", this.properties.toJSON());
 
         return o;
     }

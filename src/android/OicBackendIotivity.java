@@ -41,10 +41,15 @@ public class OicBackendIotivity
     private static class OicResourceWrapper implements OcResource.OnGetListener {
         private OcResource nativeResource;
         private OicResource oicResource;
+        private boolean finished = false;
 
         public OicResourceWrapper(OcResource nativeResource, OicResource oicResource) {
             this.nativeResource = nativeResource;
             this.oicResource = oicResource;
+        }
+
+        public boolean isFinished() {
+            return this.finished;
         }
 
         @Override
@@ -53,13 +58,22 @@ public class OicBackendIotivity
             OcRepresentation ocRepresentation)
         {
             for(String key: ocRepresentation.getKeys()) {
-                Log.d("OIC", "Key found: " + key);
+                try {
+                    Object value = ocRepresentation.getValue(key);
+                    String type = value.getClass().getSimpleName();
+                    oicResource.setProperty(key, value);
+                } catch (OcException ex) {
+                    Log.e("OIC", "Unable to retrieve key: " + key + ": " + ex.toString());
+                }
             }
+
+            this.finished = true;
         }
 
         @Override
         public synchronized void onGetFailed(java.lang.Throwable ex) {
             Log.e("OIC", "onGetFailed");
+            this.finished = true;
         }
     }
 
@@ -102,8 +116,12 @@ public class OicBackendIotivity
         // Get all poperties
         try {
             nativeResource.get(new HashMap<String, String>(), resourceWrapper);
+            while(resourceWrapper.isFinished() == false) {
+                Thread.sleep(100);
+            }
         } catch (OcException ex) {
             Log.e("OIC", ex.toString());
+        } catch (InterruptedException ex) {
         }
 
         return oicResource;
