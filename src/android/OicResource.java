@@ -7,20 +7,13 @@ import java.util.Arrays;
 // Android
 import android.util.Log;
 
-// Iotivity
-import org.iotivity.base.OcException;
-import org.iotivity.base.OcHeaderOption;
-import org.iotivity.base.OcRepresentation;
-import org.iotivity.base.OcResource;
-
 // Third party
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class OicResource
-    implements OicObjectInterface, OcResource.OnGetListener
+public class OicResource implements OicObjectInterface
 {
     private OicResourceId id;
     private ArrayList<String> resourceTypes;
@@ -59,19 +52,5 @@ public class OicResource
         o.put("mediaTypes", new JSONArray(this.mediaTypes));
 
         return o;
-    }
-
-    @Override
-    public synchronized void onGetCompleted(java.util.List<OcHeaderOption> headerOptionList,
-        OcRepresentation ocRepresentation)
-    {
-        for(String key: ocRepresentation.getKeys()) {
-            Log.d("OIC", "Key found: " + key);
-        }
-    }
-
-    @Override
-    public synchronized void onGetFailed(java.lang.Throwable ex) {
-        Log.e("OIC", "onGetFailed");
     }
 }

@@ -18,6 +18,7 @@ import android.util.Log;
 import org.iotivity.base.ModeType;
 import org.iotivity.base.OcConnectivityType;
 import org.iotivity.base.OcException;
+import org.iotivity.base.OcHeaderOption;
 import org.iotivity.base.OcPlatform;
 import org.iotivity.base.OcRepresentation;
 import org.iotivity.base.OcResource;
@@ -35,6 +36,34 @@ public class OicBackendIotivity
                OcPlatform.OnDeviceFoundListener,
                OcPlatform.OnResourceFoundListener
 {
+    // Needed to associate OcResource.OnGetListener instances to an OicResource
+    // without placing Iotivity specific code in there.
+    private static class OicResourceWrapper implements OcResource.OnGetListener {
+        private OcResource nativeResource;
+        private OicResource oicResource;
+
+        public OicResourceWrapper(OcResource nativeResource, OicResource oicResource) {
+            this.nativeResource = nativeResource;
+            this.oicResource = oicResource;
+        }
+
+        @Override
+        public synchronized void onGetCompleted(
+            java.util.List<OcHeaderOption> headerOptionList,
+            OcRepresentation ocRepresentation)
+        {
+            for(String key: ocRepresentation.getKeys()) {
+                Log.d("OIC", "Key found: " + key);
+            }
+        }
+
+        @Override
+        public synchronized void onGetFailed(java.lang.Throwable ex) {
+            Log.e("OIC", "onGetFailed");
+        }
+    }
+
+
     private CallbackContext findDevicesCallbackContext;
     private CallbackContext findResourcesCallbackContext;
 
@@ -64,18 +93,20 @@ public class OicBackendIotivity
         String deviceId = nativeResource.getHost();
         String resourcePath = nativeResource.getUri();
 
-        OicResource resource = new OicResource(nativeResource.getHost(), nativeResource.getUri());
-        resource.setResourceTypes(new ArrayList<String> (nativeResource.getResourceTypes()));
-        resource.setInterfaces(new ArrayList<String> (nativeResource.getResourceInterfaces()));
+        OicResource oicResource = new OicResource(nativeResource.getHost(), nativeResource.getUri());
+        oicResource.setResourceTypes(new ArrayList<String> (nativeResource.getResourceTypes()));
+        oicResource.setInterfaces(new ArrayList<String> (nativeResource.getResourceInterfaces()));
+
+        OicResourceWrapper resourceWrapper = new OicResourceWrapper(nativeResource, oicResource);
 
         // Get all poperties
         try {
-            nativeResource.get(new HashMap<String, String>(), resource);
+            nativeResource.get(new HashMap<String, String>(), resourceWrapper);
         } catch (OcException ex) {
             Log.e("OIC", ex.toString());
         }
 
-        return resource;
+        return oicResource;
     }
 
     @Override
