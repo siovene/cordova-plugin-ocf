@@ -3,6 +3,7 @@ package com.intel.cordova.plugin.oic;
 // Java
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 
 // Cordova
@@ -59,6 +60,24 @@ public class OicBackendIotivity
         OcPlatform.Configure(platformConfig);
     }
 
+    private static OicResource buildResourceFromNative(OcResource nativeResource) {
+        String deviceId = nativeResource.getHost();
+        String resourcePath = nativeResource.getUri();
+
+        OicResource resource = new OicResource(nativeResource.getHost(), nativeResource.getUri());
+        resource.setResourceTypes(new ArrayList<String> (nativeResource.getResourceTypes()));
+        resource.setInterfaces(new ArrayList<String> (nativeResource.getResourceInterfaces()));
+
+        // Get all poperties
+        try {
+            nativeResource.get(new HashMap<String, String>(), resource);
+        } catch (OcException ex) {
+            Log.e("OIC", ex.toString());
+        }
+
+        return resource;
+    }
+
     @Override
     public void onDeviceFound(final OcRepresentation repr) {
         OicDevice device = new OicDevice();
@@ -100,7 +119,7 @@ public class OicBackendIotivity
             return;
         }
 
-        OicResource oicResource = new OicResource(resource);
+        OicResource oicResource = this.buildResourceFromNative(resource);
         OicResourceEvent ev = new OicResourceEvent(oicResource);
 
         try {

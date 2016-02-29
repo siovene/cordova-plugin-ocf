@@ -3,7 +3,6 @@ package com.intel.cordova.plugin.oic;
 // Java
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 // Android
 import android.util.Log;
@@ -23,17 +22,10 @@ import org.json.JSONObject;
 public class OicResource
     implements OicObjectInterface, OcResource.OnGetListener
 {
-    private OcResource nativeResource;
-    private boolean getFinished = true;
-
     private OicResourceId id;
     private ArrayList<String> resourceTypes;
     private ArrayList<String> interfaces;
     private ArrayList<String> mediaTypes;
-
-    public OicResource(OcResource nativeResource) {
-        this.buildFromNative(nativeResource);
-    }
 
     public OicResource(OicResourceId id) {
         this.id = id;
@@ -59,24 +51,6 @@ public class OicResource
         this.mediaTypes = new ArrayList<String>(mediaTypes);
     }
 
-    public void buildFromNative(OcResource nativeResource) {
-        String deviceId = nativeResource.getHost();
-        String resourcePath = nativeResource.getUri();
-
-        this.nativeResource = nativeResource;
-        this.id = new OicResourceId(deviceId, resourcePath);
-        this.setResourceTypes(new ArrayList<String> (nativeResource.getResourceTypes()));
-        this.setInterfaces(new ArrayList<String> (nativeResource.getResourceInterfaces()));
-
-        // Get all poperties
-        try {
-            this.getFinished = false;
-            nativeResource.get(new HashMap<String, String>(), this);
-        } catch (OcException ex) {
-            Log.e("OIC", ex.toString());
-        }
-    }
-
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
         o.put("id", this.id.toJSON());
@@ -91,16 +65,13 @@ public class OicResource
     public synchronized void onGetCompleted(java.util.List<OcHeaderOption> headerOptionList,
         OcRepresentation ocRepresentation)
     {
-        Log.d("OIC", "onGetCompleted: headers size = "+ headerOptionList.size());
-        for(OcHeaderOption option: headerOptionList) {
-            Log.d("OIC", "Option: " + option.getOptionData());
+        for(String key: ocRepresentation.getKeys()) {
+            Log.d("OIC", "Key found: " + key);
         }
-        this.getFinished = true;
     }
 
     @Override
     public synchronized void onGetFailed(java.lang.Throwable ex) {
         Log.e("OIC", "onGetFailed");
-        this.getFinished = true;
     }
 }
