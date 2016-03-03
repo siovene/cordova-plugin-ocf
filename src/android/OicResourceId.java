@@ -9,6 +9,8 @@ public class OicResourceId implements OicObjectInterface {
     private String deviceId;
     private String resourcePath;
 
+    public OicResourceId() {}
+
     public OicResourceId(String deviceId, String resourcePath) {
         this.deviceId = deviceId;
         this.resourcePath = resourcePath;
@@ -20,5 +22,10 @@ public class OicResourceId implements OicObjectInterface {
         o.put("resourcePath", this.resourcePath);
 
         return o;
+    }
+
+    public static OicResourceId fromJSON(JSONObject obj) throws JSONException {
+        return new OicResourceId(
+            obj.optString("deviceId"), obj.optString("resourcePath"));
     }
 }

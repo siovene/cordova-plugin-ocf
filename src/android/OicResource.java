@@ -21,6 +21,14 @@ public class OicResource implements OicObjectInterface
     private ArrayList<String> mediaTypes;
     private OicResourceRepresentation properties;
 
+    public OicResource() {
+        this.id  = new OicResourceId();
+        this.resourceTypes = new ArrayList<String>();
+        this.interfaces = new ArrayList<String>();
+        this.mediaTypes = new ArrayList<String>();
+        this.properties = new OicResourceRepresentation();
+    }
+
     public OicResource(OicResourceId id) {
         this.id = id;
         this.properties = new OicResourceRepresentation();
@@ -60,5 +68,43 @@ public class OicResource implements OicObjectInterface
         o.put("properties", this.properties.toJSON());
 
         return o;
+    }
+
+    public static OicResource fromJSON(JSONObject obj) throws JSONException {
+        OicResource resource = new OicResource();
+
+        resource.id = OicResourceId.fromJSON(obj);
+
+        JSONArray resourceTypesJson = obj.optJSONArray("resourceTypes");
+        if (resourceTypesJson != null) {
+            resource.resourceTypes = new ArrayList<String>();
+            for (int i = 0; i < resourceTypesJson.length(); i++) {
+                resource.resourceTypes.add(resourceTypesJson.getString(i));
+            }
+        }
+
+        JSONArray interfacesJson = obj.optJSONArray("interfaces");
+        if (interfacesJson != null) {
+            resource.interfaces = new ArrayList<String>();
+            for (int i = 0; i < interfacesJson.length(); i++) {
+                resource.interfaces.add(interfacesJson.getString(i));
+            }
+        }
+
+        JSONArray mediaTypesJson = obj.optJSONArray("mediaTypes");
+        if (mediaTypesJson != null) {
+            resource.mediaTypes = new ArrayList<String>();
+            for (int i = 0; i < mediaTypesJson.length(); i++) {
+                resource.mediaTypes.add(mediaTypesJson.getString(i));
+            }
+        }
+
+        JSONObject propertiesJson = obj.optJSONObject("properties");
+        if (propertiesJson != null) {
+            resource.properties = OicResourceRepresentation.fromJSON(
+                propertiesJson);
+        }
+
+        return resource;
     }
 }

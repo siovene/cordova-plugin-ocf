@@ -22,29 +22,8 @@ public class OicBackendMock implements OicBackendInterface {
 
     public void findResources(JSONArray args, CallbackContext cc)
             throws JSONException {
-        String deviceId;
-        String resourcePath;
+        OicResource res = OicResource.fromJSON(args.getJSONObject(0));
 
-        ArrayList<String> resourceTypes;
-        JSONArray resourceTypesJson;
-        resourceTypes = new ArrayList<String>();
-
-        try {
-            deviceId = args.getJSONObject(0).getString("deviceId");
-            resourcePath = args.getJSONObject(0).getString("resourcePath");
-            resourceTypesJson = args.getJSONObject(0).getJSONArray("resourceTypes");
-            if (resourceTypesJson != null) {
-                for (int i = 0; i < resourceTypesJson.length(); i++) {
-                    resourceTypes.add(resourceTypesJson.getString(i));
-                }
-            }
-        } catch (JSONException ex) {
-            deviceId = "";
-            resourcePath = "";
-        }
-
-        OicResource res = new OicResource(deviceId, resourcePath);
-        res.setResourceTypes(resourceTypes);
         res.setInterfaces(new ArrayList<String>() {{
             add("iface1");
             add("iface2");

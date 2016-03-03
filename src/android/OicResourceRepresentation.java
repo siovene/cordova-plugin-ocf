@@ -1,6 +1,7 @@
 package com.intel.cordova.plugin.oic;
 
 // Java
+import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,5 +35,18 @@ public class OicResourceRepresentation implements OicObjectInterface {
         }
 
         return o;
+    }
+
+    public static OicResourceRepresentation fromJSON(JSONObject obj)
+        throws JSONException
+    {
+        OicResourceRepresentation repr = new OicResourceRepresentation();
+        Iterator<String> it = obj.keys();
+        while(it.hasNext()) {
+            String key = it.next();
+            repr.setValue(key, obj.get(key));
+        }
+
+        return repr;
     }
 }
