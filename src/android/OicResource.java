@@ -39,10 +39,6 @@ public class OicResource implements OicObjectInterface
         this.properties = new OicResourceRepresentation();
     }
 
-    public void finalize() {
-        Log.d("OIC", "Resource finalized");
-    }
-
     public void setResourceTypes(ArrayList<String> resourceTypes) {
         this.resourceTypes = new ArrayList<String>(resourceTypes);
     }
