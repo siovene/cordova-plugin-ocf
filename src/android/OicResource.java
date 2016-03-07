@@ -39,6 +39,24 @@ public class OicResource implements OicObjectInterface
         this.properties = new OicResourceRepresentation();
     }
 
+    // ------------------------------------------------------------------------
+    // Getters
+    // ------------------------------------------------------------------------
+
+    public OicResourceId getId() { return this.id; }
+
+    public ArrayList<String> getResourceTypes() { return this.resourceTypes; }
+
+    public ArrayList<String> getInterfaces() { return this.interfaces; }
+
+    public ArrayList<String> getMediaTypes() { return this.mediaTypes; }
+
+    public OicResourceRepresentation getProperties() { return this.properties; }
+
+    // ------------------------------------------------------------------------
+    // Setters
+    // ------------------------------------------------------------------------
+
     public void setResourceTypes(ArrayList<String> resourceTypes) {
         this.resourceTypes = new ArrayList<String>(resourceTypes);
     }
@@ -67,9 +85,10 @@ public class OicResource implements OicObjectInterface
     }
 
     public static OicResource fromJSON(JSONObject obj) throws JSONException {
+        Log.d("OIC", obj.toString());
         OicResource resource = new OicResource();
 
-        resource.id = OicResourceId.fromJSON(obj);
+        resource.id = OicResourceId.fromJSON(obj.optJSONObject("id"));
 
         JSONArray resourceTypesJson = obj.optJSONArray("resourceTypes");
         if (resourceTypesJson != null) {

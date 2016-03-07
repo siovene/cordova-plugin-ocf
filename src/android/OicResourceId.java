@@ -16,6 +16,24 @@ public class OicResourceId implements OicObjectInterface {
         this.resourcePath = resourcePath;
     }
 
+    // ------------------------------------------------------------------------
+    // Getters
+    // ------------------------------------------------------------------------
+
+    public String getDeviceId() { return this.deviceId; }
+
+    public String getResourcePath() { return this.resourcePath; }
+
+    // ------------------------------------------------------------------------
+    // Setters
+    // ------------------------------------------------------------------------
+
+    public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
+
+    public void setResourcePath(String resourcePath) {
+        this.resourcePath = resourcePath;
+    }
+
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
         o.put("deviceId", this.deviceId);
@@ -25,7 +43,13 @@ public class OicResourceId implements OicObjectInterface {
     }
 
     public static OicResourceId fromJSON(JSONObject obj) throws JSONException {
-        return new OicResourceId(
-            obj.optString("deviceId"), obj.optString("resourcePath"));
+        OicResourceId id = new OicResourceId();
+
+        if (obj != null) {
+            id.deviceId = obj.optString("deviceId");
+            id.resourcePath = obj.optString("resourcePath");
+        }
+
+        return id;
     }
 }

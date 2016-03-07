@@ -20,13 +20,27 @@ public class OicResourceRepresentation implements OicObjectInterface {
         this.properties = new HashMap<String, Object>();
     }
 
-    public void setValue(String key, Object value) {
-        this.properties.put(key, value);
-    }
+    // ------------------------------------------------------------------------
+    // Getters
+    // ------------------------------------------------------------------------
+
+    public Map<String, Object> getProperties() { return this.properties; }
 
     public Object getValue(String key) {
         return this.properties.get(key);
     }
+
+    // ------------------------------------------------------------------------
+    // Setters
+    // ------------------------------------------------------------------------
+
+    public void setValue(String key, Object value) {
+        this.properties.put(key, value);
+    }
+
+    // ------------------------------------------------------------------------
+    // Conversions
+    // ------------------------------------------------------------------------
 
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();

@@ -99,5 +99,19 @@ exports.defineAutoTests = function() {
             });
         });
 
+        it('update works', function(done) {
+            expect(oic.update).toBeDefined();
+            oic.setBackend("mock").then(function() {
+                oic.onupdate = function(event) {
+                    expect(event).toBeDefined();
+                    expect(event.updates).toBeDefined();
+                    expect(event.updates.id.deviceId).toBe("foo");
+                    done();
+                }
+                oic.update({"id": {"deviceId": "foo"}}).then(function success() {
+                    expect(true).toBe(true);
+                });
+            });
+        });
     });
 };

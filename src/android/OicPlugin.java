@@ -43,6 +43,12 @@ public class OicPlugin extends CordovaPlugin {
         this.backend.findDevices(cc);
     }
 
+    private void updateResource(JSONArray args, CallbackContext cc)
+        throws JSONException
+    {
+        this.backend.updateResource(args, cc);
+    }
+
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext cc) {
         Log.d(TAG, "Executing Cordova action: " + action);
@@ -62,6 +68,11 @@ public class OicPlugin extends CordovaPlugin {
                 cc.sendPluginResult(result);
             } else if ("findDevices".equals(action)) {
                 this.findDevices(cc);
+                PluginResult result = new PluginResult(PluginResult.Status.OK);
+                result.setKeepCallback(true);
+                cc.sendPluginResult(result);
+            } else if ("updateResource".equals(action)) {
+                this.updateResource(args, cc);
                 PluginResult result = new PluginResult(PluginResult.Status.OK);
                 result.setKeepCallback(true);
                 cc.sendPluginResult(result);

@@ -76,8 +76,31 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
         });
     };
 
+    OicPlugin.prototype.update = function(resource) {
+        var self = this;
+
+        return new Promise(function(resolve, reject) {
+            function successCallback(event) {
+                if (event === "OK") {
+                    // No event, this is just the native call completing.
+                    resolve();
+                } else {
+                    // Event passed: this is an "onupdate" callback.
+                    self.onupdate(event);
+                }
+            }
+
+            function errorCallback(error) {
+                reject(error);
+            }
+
+            exec(successCallback, errorCallback, "OicPlugin", "updateResource", [resource]);
+        });
+    }
+
     OicPlugin.prototype.onresourcefound = function(event) {};
     OicPlugin.prototype.ondevicefound = function(event) {};
+    OicPlugin.prototype.onupdate = function(event) {};
 
     var oic = new OicPlugin();
     module.exports = oic;

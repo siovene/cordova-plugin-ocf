@@ -14,6 +14,7 @@ import android.util.Log;
 // Third party
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class OicBackendMock implements OicBackendInterface {
@@ -21,9 +22,20 @@ public class OicBackendMock implements OicBackendInterface {
     }
 
     public void findResources(JSONArray args, CallbackContext cc)
-            throws JSONException {
-        OicResource res = OicResource.fromJSON(args.getJSONObject(0));
+            throws JSONException
+    {
+        final JSONObject obj = args.getJSONObject(0);
+        OicResource res = new OicResource(
+            obj.optString("deviceId"), obj.optString("resourcePath"));
 
+        res.setResourceTypes(new ArrayList<String>() {{
+            JSONArray a = obj.optJSONArray("resourceTypes");
+            if (a != null) {
+                for (int i = 0; i < a.length(); i++) {
+                    add(a.getString(i));
+                }
+            }
+        }});
         res.setInterfaces(new ArrayList<String>() {{
             add("iface1");
             add("iface2");
@@ -56,6 +68,18 @@ public class OicBackendMock implements OicBackendInterface {
 
         OicDeviceEvent ev = new OicDeviceEvent(device);
         PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
+        result.setKeepCallback(true);
+        cc.sendPluginResult(result);
+    }
+
+    public void updateResource(JSONArray args, CallbackContext cc)
+        throws JSONException
+    {
+        Log.d("OIC", args.toString());
+        OicResource updates = OicResource.fromJSON(args.getJSONObject(0));
+        OicResourceUpdateEvent ev = new OicResourceUpdateEvent(updates);
+        PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
+        Log.d("OIC", ev.toJSON().toString());
         result.setKeepCallback(true);
         cc.sendPluginResult(result);
     }

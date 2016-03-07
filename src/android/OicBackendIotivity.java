@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // Cordova
 import org.apache.cordova.CallbackContext;
@@ -36,20 +37,29 @@ public class OicBackendIotivity
                OcPlatform.OnDeviceFoundListener,
                OcPlatform.OnResourceFoundListener
 {
-    // Needed to associate OcResource.OnGetListener instances to an OicResource
-    // without placing Iotivity specific code in there.
-    private static class OicResourceWrapper implements OcResource.OnGetListener {
+    // Needed to associate OcResource.On{Get,Post̋}Listener instances to an
+    // OicResource without placing Iotivity specific code in there.
+    private static class OicResourceWrapper
+        implements OcResource.OnGetListener, OcResource.OnPutListener
+    {
         private OcResource nativeResource;
         private OicResource oicResource;
-        private boolean finished = false;
+        private boolean getFinished = false;
+        private boolean putFinished = false;
 
-        public OicResourceWrapper(OcResource nativeResource, OicResource oicResource) {
+        public OicResourceWrapper(
+            OcResource nativeResource, OicResource oicResource)
+        {
             this.nativeResource = nativeResource;
             this.oicResource = oicResource;
         }
 
-        public boolean isFinished() {
-            return this.finished;
+        public boolean isGetFinished() {
+            return this.getFinished;
+        }
+
+        public boolean isPutFinished() {
+            return this.putFinished;
         }
 
         @Override
@@ -63,17 +73,32 @@ public class OicBackendIotivity
                     String type = value.getClass().getSimpleName();
                     oicResource.setProperty(key, value);
                 } catch (OcException ex) {
-                    Log.e("OIC", "Unable to retrieve key: " + key + ": " + ex.toString());
+                    Log.e("OIC", "Unable to retrieve key: " + key + ": " +
+                          ex.toString());
                 }
             }
 
-            this.finished = true;
+            this.getFinished = true;
         }
 
         @Override
         public synchronized void onGetFailed(java.lang.Throwable ex) {
             Log.e("OIC", "onGetFailed");
-            this.finished = true;
+            this.getFinished = true;
+        }
+
+        @Override
+        public synchronized void onPutCompleted(
+            java.util.List<OcHeaderOption> headerOptionList,
+            OcRepresentation ocRepresentation)
+        {
+            this.putFinished = true;
+        }
+
+        @Override
+        public synchronized void onPutFailed(java.lang.Throwable ex) {
+            Log.e("OIC", "onPutFailed");
+            this.putFinished = true;
         }
     }
 
@@ -88,6 +113,8 @@ public class OicBackendIotivity
 
     private OicPlugin plugin;
     private CallbackContext callbackContext;
+    private HashMap<String, OcResource> foundResources =
+        new HashMap<String, OcResource>();
 
     public OicBackendIotivity(OicPlugin plugin) {
         this.plugin = plugin;
@@ -103,7 +130,16 @@ public class OicBackendIotivity
         OcPlatform.Configure(platformConfig);
     }
 
+    // ------------------------------------------------------------------------
+    // TODO: conversion functions should be in backend specific subclasses of
+    // Oic* classes.
+    // ------------------------------------------------------------------------
+
     private static OicResource buildResourceFromNative(OcResource nativeResource) {
+        int elapsed = 0;
+        final int timeout = 5000;
+        final int sleepTime = 100;
+
         String deviceId = nativeResource.getHost();
         String resourcePath = nativeResource.getUri();
 
@@ -114,10 +150,12 @@ public class OicBackendIotivity
         OicResourceWrapper resourceWrapper = new OicResourceWrapper(nativeResource, oicResource);
 
         // Get all poperties
+        Log.d("OIC", "==========================================================");
         try {
             nativeResource.get(new HashMap<String, String>(), resourceWrapper);
-            while(resourceWrapper.isFinished() == false) {
-                Thread.sleep(100);
+            while(resourceWrapper.isGetFinished() == false && elapsed <= timeout) {
+                Thread.sleep(sleepTime);
+                elapsed += sleepTime;
             }
         } catch (OcException ex) {
             Log.e("OIC", ex.toString());
@@ -126,6 +164,85 @@ public class OicBackendIotivity
 
         return oicResource;
     }
+
+    private static OcResource resourceToNative(OicResource oicResource) {
+        OcResource nativeResource = null;
+        String url = oicResource.getId().getDeviceId();
+        String host = oicResource.getId().getResourcePath();
+        ArrayList<String> resourceTypes = oicResource.getResourceTypes();
+        ArrayList<String> interfaces = oicResource.getInterfaces();
+
+        Log.d("OIC", "creating native resource...");
+        Log.d("OIC", "url = " + url);
+        Log.d("OIC", "host = " + host);
+        Log.d("OIC", "resourceTypes size = " + resourceTypes.size());
+        Log.d("OIC", "interfaces size = " + interfaces.size());
+        try {
+            nativeResource = OcPlatform.constructResourceObject(
+                oicResource.getId().getDeviceId(),
+                oicResource.getId().getResourcePath(),
+                EnumSet.of(OcConnectivityType.CT_DEFAULT),
+                false,
+                oicResource.getResourceTypes(),
+                oicResource.getInterfaces());
+        } catch (OcException ex) {
+            Log.e("OIC", ex.toString());
+        }
+
+        Log.d("OIC", "returning native resource...");
+        return nativeResource;
+    }
+
+    private static OcRepresentation representationToNative(
+        OicResourceRepresentation repr)
+    {
+        OcRepresentation nativeRepr = new OcRepresentation();
+        for (Map.Entry<String, Object> entry : repr.getProperties().entrySet())
+        {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            String type = value.getClass().getName();
+            String stringValue = "" + value;
+
+            // Parse value and support only primitive types for now.
+            try {
+                boolean done = false;
+
+                try {
+                    boolean b = Boolean.parseBoolean(stringValue);
+                    nativeRepr.setValue(key, b);
+                    done = true;
+                } catch(NumberFormatException ex) {
+                    Log.w("OIC", "Value is not a boolean");
+                }
+
+                try {
+                    int i = Integer.parseInt(stringValue);
+                    nativeRepr.setValue(key, i);
+                    done = true;
+                } catch(NumberFormatException ex) {
+                    Log.w("OIC", "Value is not an integer");
+                }
+
+                try {
+                    double d = Double.parseDouble(stringValue);
+                    nativeRepr.setValue(key, d);
+                    done = true;
+                } catch(NumberFormatException ex) {
+                    Log.w("OIC", "Value is not a double");
+                }
+
+                if (!done) {
+                    nativeRepr.setValue(key, stringValue);
+                }
+            } catch(OcException ex) {
+                Log.e("OIC", ex.toString());
+            }
+        }
+
+        return nativeRepr;
+    }
+
 
     @Override
     public void onDeviceFound(final OcRepresentation repr) {
@@ -163,10 +280,18 @@ public class OicBackendIotivity
 
     @Override
     public synchronized void onResourceFound(OcResource resource) {
+        String host = resource.getHost();
         String resourcePath = resource.getUri();
+        String key = host + resourcePath;
+
+        Log.d("OIC", "Found resource: " + key);
+
         if (resourcePath.equals("/oic/p") || resourcePath.equals("/oic/d")) {
             return;
         }
+
+        // Keep for later
+        this.foundResources.put(key, resource);
 
         OicResource oicResource = this.buildResourceFromNative(resource);
         OicResourceEvent ev = new OicResourceEvent(oicResource);
@@ -197,5 +322,49 @@ public class OicBackendIotivity
         } catch (OcException ex) {
             this.findResourcesCallbackContext.error(ex.getMessage());
         }
+    }
+
+    public void updateResource(JSONArray args, CallbackContext cc)
+        throws JSONException
+    {
+        int elapsed = 0;
+        final int timeout = 5000;
+        final int sleepTime = 100;
+
+        OicResource oicResource = OicResource.fromJSON(args.getJSONObject(0));
+        OcResource nativeResource = this.foundResources.get(
+            oicResource.getId().getDeviceId() + oicResource.getId().getResourcePath());
+        if (nativeResource == null) {
+            Log.d("OIC", "Unable to recycle known native resource");
+            nativeResource = OicBackendIotivity.resourceToNative(oicResource);
+        }
+
+        OcRepresentation nativeRepr = this.representationToNative(
+            oicResource.getProperties());
+        OicResourceWrapper resourceWrapper = new OicResourceWrapper(
+            nativeResource, oicResource);
+
+        Log.d("OIC", "Updating resource: " +  oicResource.toJSON().toString());
+
+        try {
+            nativeResource.put(
+                nativeRepr, new HashMap<String, String>(), resourceWrapper);
+            while(resourceWrapper.isPutFinished() == false && elapsed <= timeout) {
+                Thread.sleep(sleepTime);
+                elapsed += sleepTime;
+            }
+        } catch (OcException ex) {
+            Log.e("OIC", ex.toString());
+        } catch (InterruptedException ex) {
+        }
+
+        PluginResult.Status status;
+        if (resourceWrapper.isPutFinished()) {
+            status = PluginResult.Status.OK;
+        } else {
+            status = PluginResult.Status.ERROR;
+        }
+
+        cc.sendPluginResult(new PluginResult(status));
     }
 }
