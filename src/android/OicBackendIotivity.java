@@ -113,8 +113,6 @@ public class OicBackendIotivity
 
     private OicPlugin plugin;
     private CallbackContext callbackContext;
-    private HashMap<String, OcResource> foundResources =
-        new HashMap<String, OcResource>();
 
     public OicBackendIotivity(OicPlugin plugin) {
         this.plugin = plugin;
@@ -290,9 +288,6 @@ public class OicBackendIotivity
             return;
         }
 
-        // Keep for later
-        this.foundResources.put(key, resource);
-
         OicResource oicResource = this.buildResourceFromNative(resource);
         OicResourceEvent ev = new OicResourceEvent(oicResource);
 
@@ -332,13 +327,7 @@ public class OicBackendIotivity
         final int sleepTime = 100;
 
         OicResource oicResource = OicResource.fromJSON(args.getJSONObject(0));
-        OcResource nativeResource = this.foundResources.get(
-            oicResource.getId().getDeviceId() + oicResource.getId().getResourcePath());
-        if (nativeResource == null) {
-            Log.d("OIC", "Unable to recycle known native resource");
-            nativeResource = OicBackendIotivity.resourceToNative(oicResource);
-        }
-
+        OcResource nativeResource = OicBackendIotivity.resourceToNative(oicResource);
         OcRepresentation nativeRepr = this.representationToNative(
             oicResource.getProperties());
         OicResourceWrapper resourceWrapper = new OicResourceWrapper(
