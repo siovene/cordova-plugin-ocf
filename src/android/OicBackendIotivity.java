@@ -303,15 +303,15 @@ public class OicBackendIotivity
     public void findResources(JSONArray args, CallbackContext cc)
         throws JSONException
     {
-        String host = args.getJSONObject(0).getString("deviceId");
-        String resourceUri = args.getJSONObject(0).getString("resourcePath");
+        String deviceId = args.getJSONObject(0).getString("deviceId");
+        String resourceType = args.getJSONObject(0).getString("resourceType");
 
         this.findResourcesCallbackContext = cc;
 
         try {
             OcPlatform.findResource(
-                host,
-                OcPlatform.WELL_KNOWN_QUERY + "?rt=" + resourceUri,
+                deviceId,
+                OcPlatform.WELL_KNOWN_QUERY + "?rt=" + resourceType,
                 EnumSet.of(OcConnectivityType.CT_DEFAULT),
                 this);
         } catch (OcException ex) {
