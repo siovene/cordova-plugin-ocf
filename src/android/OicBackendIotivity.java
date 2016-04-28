@@ -67,17 +67,12 @@ public class OicBackendIotivity
             java.util.List<OcHeaderOption> headerOptionList,
             OcRepresentation ocRepresentation)
         {
-            for(String key: ocRepresentation.getKeys()) {
-                try {
-                    Object value = ocRepresentation.getValue(key);
-                    String type = value.getClass().getSimpleName();
-                    oicResource.setProperty(key, value);
-                } catch (OcException ex) {
-                    Log.e("OIC", "Unable to retrieve key: " + key + ": " +
-                          ex.toString());
-                }
+            Map<String, Object> values = ocRepresentation.getValues();
+            for(Map.Entry<String, Object> entry: values.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                oicResource.setProperty(key, value);
             }
-
             this.getFinished = true;
         }
 
