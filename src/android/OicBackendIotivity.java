@@ -303,8 +303,8 @@ public class OicBackendIotivity
     public void findResources(JSONArray args, CallbackContext cc)
         throws JSONException
     {
-        String deviceId = args.getJSONObject(0).getString("deviceId");
-        String resourceType = args.getJSONObject(0).getString("resourceType");
+        String deviceId = args.getJSONObject(0).optString("deviceId");
+        String resourceType = args.getJSONObject(0).optString("resourceType");
 
         this.findResourcesCallbackContext = cc;
 
