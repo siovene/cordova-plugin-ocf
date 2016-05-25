@@ -206,12 +206,12 @@ public class OicBackendIotivity
             try {
                 boolean done = false;
 
-                try {
-                    boolean b = Boolean.parseBoolean(stringValue);
-                    nativeRepr.setValue(key, b);
+                if (stringValue.toLowerCase().equals("true")) {
+                    nativeRepr.setValue(key, true);
                     done = true;
-                } catch(NumberFormatException ex) {
-                    Log.w("OIC", "Value is not a boolean");
+                } else if (stringValue.toLowerCase().equals("false")) {
+                    nativeRepr.setValue(key, false);
+                    done = true;
                 }
 
                 try {
