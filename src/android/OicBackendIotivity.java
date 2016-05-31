@@ -139,6 +139,7 @@ public class OicBackendIotivity
         OicResource oicResource = new OicResource(nativeResource.getHost(), nativeResource.getUri());
         oicResource.setResourceTypes(new ArrayList<String> (nativeResource.getResourceTypes()));
         oicResource.setInterfaces(new ArrayList<String> (nativeResource.getResourceInterfaces()));
+        oicResource.setObservable(nativeResource.isObservable());
 
         OicResourceWrapper resourceWrapper = new OicResourceWrapper(nativeResource, oicResource);
 

@@ -20,6 +20,7 @@ public class OicResource implements OicObjectInterface
     private ArrayList<String> interfaces;
     private ArrayList<String> mediaTypes;
     private OicResourceRepresentation properties;
+    private boolean observable;
 
     public OicResource() {
         this.id  = new OicResourceId();
@@ -27,6 +28,7 @@ public class OicResource implements OicObjectInterface
         this.interfaces = new ArrayList<String>();
         this.mediaTypes = new ArrayList<String>();
         this.properties = new OicResourceRepresentation();
+        this.observable = false;
     }
 
     public OicResource(OicResourceId id) {
@@ -53,6 +55,8 @@ public class OicResource implements OicObjectInterface
 
     public OicResourceRepresentation getProperties() { return this.properties; }
 
+    public boolean getObservable() { return this.observable; }
+
     // ------------------------------------------------------------------------
     // Setters
     // ------------------------------------------------------------------------
@@ -73,6 +77,10 @@ public class OicResource implements OicObjectInterface
         this.properties.setValue(key, value);
     }
 
+    public void setObservable(boolean value) {
+        this.observable = value;
+    }
+
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
         o.put("id", this.id.toJSON());
@@ -80,6 +88,7 @@ public class OicResource implements OicObjectInterface
         o.put("interfaces", new JSONArray(this.interfaces));
         o.put("mediaTypes", new JSONArray(this.mediaTypes));
         o.put("properties", this.properties.toJSON());
+        o.put("observable", this.observable);
 
         return o;
     }
@@ -119,6 +128,8 @@ public class OicResource implements OicObjectInterface
             resource.properties = OicResourceRepresentation.fromJSON(
                 propertiesJson);
         }
+
+        resource.observable = obj.optBoolean("observable");
 
         return resource;
     }

@@ -48,6 +48,8 @@ public class OicBackendMock implements OicBackendInterface {
         res.setProperty("some_int", 1);
         res.setProperty("some_string", "s");
 
+        res.setObservable(false);
+
         OicResourceEvent ev = new OicResourceEvent(res);
         PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
         result.setKeepCallback(true);

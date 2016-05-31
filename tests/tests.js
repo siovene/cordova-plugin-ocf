@@ -65,6 +65,8 @@ exports.defineAutoTests = function() {
                     expect(event.resource.properties).toBeDefined();
                     expect(event.resource.properties.some_int).toBe(1);
                     expect(event.resource.properties.some_string).toBe("s");
+
+                    expect(event.resource.observable).toBe(false);
                     done();
                 }
                 oic.findResources(options).then(function success() {
