@@ -4,8 +4,10 @@ package com.intel.cordova.plugin.oic;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 // Cordova
 import org.apache.cordova.CallbackContext;
@@ -17,6 +19,7 @@ import android.util.Log;
 
 // Iotivity
 import org.iotivity.base.ModeType;
+import org.iotivity.base.ObserveType;
 import org.iotivity.base.OcConnectivityType;
 import org.iotivity.base.OcException;
 import org.iotivity.base.OcHeaderOption;
@@ -30,6 +33,7 @@ import org.iotivity.base.ServiceType;
 // Third party
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class OicBackendIotivity
@@ -40,7 +44,8 @@ public class OicBackendIotivity
     // Needed to associate OcResource.On{Get,Post̋}Listener instances to an
     // OicResource without placing Iotivity specific code in there.
     private static class OicResourceWrapper
-        implements OcResource.OnGetListener, OcResource.OnPutListener
+        implements OcResource.OnGetListener, OcResource.OnPutListener,
+                   OcResource.OnObserveListener
     {
         private OcResource nativeResource;
         private OicResource oicResource;
@@ -95,6 +100,22 @@ public class OicBackendIotivity
             Log.e("OIC", "onPutFailed");
             this.putFinished = true;
         }
+
+        @Override
+        public synchronized void onObserveCompleted(
+               java.util.List<OcHeaderOption> headerOptionList,
+               OcRepresentation ocRepresentation,
+               int sequenceNumber)
+        {
+            Log.d("OIC", "onObserveCompleted");
+            Map update = new HashMap<String, OcRepresentation>();
+            update.put(this.oicResource.getId().getUniqueKey(), ocRepresentation);
+        }
+
+        @Override
+        public synchronized void onObserveFailed(java.lang.Throwable ex) {
+            Log.e("OIC", "onObserveFailed");
+        }
     }
 
 
@@ -108,6 +129,7 @@ public class OicBackendIotivity
 
     private OicPlugin plugin;
     private CallbackContext callbackContext;
+    private Queue resourceUpdates = new LinkedList();
 
     public OicBackendIotivity(OicPlugin plugin) {
         this.plugin = plugin;
@@ -284,7 +306,18 @@ public class OicBackendIotivity
             return;
         }
 
+
         OicResource oicResource = this.buildResourceFromNative(resource);
+        OicResourceWrapper resourceWrapper = new OicResourceWrapper(resource, oicResource);
+
+        if (resource.isObservable()) {
+            try {
+                resource.observe(ObserveType.OBSERVE, new HashMap<String, String>(), resourceWrapper);
+            } catch (OcException e) {
+                Log.e("OIC", "Unable to observe resoure");
+            }
+        }
+
         OicResourceEvent ev = new OicResourceEvent(oicResource);
 
         try {
@@ -351,5 +384,12 @@ public class OicBackendIotivity
         }
 
         cc.sendPluginResult(new PluginResult(status));
+    }
+
+    public JSONObject getResourceUpdates() throws JSONException {
+        JSONObject updates = new JSONObject();
+        updates.put("updates", this.resourceUpdates);
+        this.resourceUpdates.clear();
+        return updates;
     }
 }

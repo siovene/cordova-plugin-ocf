@@ -12,6 +12,7 @@ import android.util.Log;
 // Third party
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class OicPlugin extends CordovaPlugin {
@@ -49,6 +50,10 @@ public class OicPlugin extends CordovaPlugin {
         this.backend.updateResource(args, cc);
     }
 
+    private JSONObject getResourceUpdates() throws JSONException {
+        return this.backend.getResourceUpdates();
+    }
+
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext cc) {
         Log.d(TAG, "Executing Cordova action: " + action);
@@ -76,6 +81,8 @@ public class OicPlugin extends CordovaPlugin {
                 PluginResult result = new PluginResult(PluginResult.Status.OK);
                 result.setKeepCallback(true);
                 cc.sendPluginResult(result);
+            } else if ("getResourceUpdates".equals(action)) {
+                cc.success(this.getResourceUpdates());
             } else {
                 Log.e(TAG, "Unknown action: " + action);
                 cc.error("Unknown action: " + action);

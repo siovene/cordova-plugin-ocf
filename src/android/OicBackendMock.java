@@ -85,4 +85,8 @@ public class OicBackendMock implements OicBackendInterface {
         result.setKeepCallback(true);
         cc.sendPluginResult(result);
     }
+
+    public JSONObject getResourceUpdates() throws JSONException {
+        return new JSONObject();
+    }
 }
