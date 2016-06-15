@@ -56,7 +56,7 @@ public class OicBackendMock implements OicBackendInterface {
         cc.sendPluginResult(result);
     }
 
-    public void findDevices(CallbackContext cc) throws JSONException {
+    public void findDevices(CallbackContext cc) {
         OicDevice device = new OicDevice();
         device.setUuid("1234567890");
         device.setUrl("http://example.com/");
@@ -69,9 +69,13 @@ public class OicBackendMock implements OicBackendInterface {
         device.setRole("server");
 
         OicDeviceEvent ev = new OicDeviceEvent(device);
-        PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
-        result.setKeepCallback(true);
-        cc.sendPluginResult(result);
+        try {
+            PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
+            result.setKeepCallback(true);
+            cc.sendPluginResult(result);
+        } catch (JSONException e) {
+            cc.error("Internal error: " + e.getMessage());
+        }
     }
 
     public void updateResource(JSONArray args, CallbackContext cc)
@@ -84,5 +88,9 @@ public class OicBackendMock implements OicBackendInterface {
         Log.d("OIC", ev.toJSON().toString());
         result.setKeepCallback(true);
         cc.sendPluginResult(result);
+    }
+
+    public JSONArray getResourceUpdates() throws JSONException {
+        return new JSONArray();
     }
 }

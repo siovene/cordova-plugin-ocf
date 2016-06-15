@@ -102,6 +102,26 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
     OicPlugin.prototype.ondevicefound = function(event) {};
     OicPlugin.prototype.onupdate = function(event) {};
 
+    /**************************************************************************
+    *  Create the plugin and get things moving.                               *
+    **************************************************************************/
+
     var oic = new OicPlugin();
+
+    // To get resource update events, we need to poll from the JS side.
+    setInterval(function() {
+        function successCallback(updates) {
+            if (updates.length > 0) {
+                oic.onupdate({updates: updates});
+            }
+        }
+
+        function errorCallback(error) {
+            console.error(error);
+        }
+
+        exec(successCallback, errorCallback, "OicPlugin", "getResourceUpdates", []);
+    }, 10000);
+
     module.exports = oic;
 });

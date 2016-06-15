@@ -24,6 +24,8 @@ public class OicResourceId implements OicObjectInterface {
 
     public String getResourcePath() { return this.resourcePath; }
 
+    public String getUniqueKey() { return this.deviceId + this.resourcePath; }
+
     // ------------------------------------------------------------------------
     // Setters
     // ------------------------------------------------------------------------

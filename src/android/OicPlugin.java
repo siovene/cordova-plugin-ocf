@@ -12,7 +12,7 @@ import android.util.Log;
 // Third party
 import org.json.JSONArray;
 import org.json.JSONException;
-
+import org.json.JSONObject;
 
 public class OicPlugin extends CordovaPlugin {
     static final String TAG = "OicPlugin";
@@ -53,10 +53,21 @@ public class OicPlugin extends CordovaPlugin {
         });
     }
 
-    private void updateResource(JSONArray args, CallbackContext cc)
-        throws JSONException
-    {
-        this.backend.updateResource(args, cc);
+    private void updateResource(final JSONArray args, final CallbackContext cc) {
+        final OicPlugin self = this;
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                try {
+                    self.backend.updateResource(args, cc);
+                } catch (JSONException e) {
+                    cc.error("Error parsing arguments: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    private JSONArray getResourceUpdates() throws JSONException {
+        return this.backend.getResourceUpdates();
     }
 
     @Override
@@ -86,6 +97,9 @@ public class OicPlugin extends CordovaPlugin {
                 PluginResult result = new PluginResult(PluginResult.Status.OK);
                 result.setKeepCallback(true);
                 cc.sendPluginResult(result);
+            } else if ("getResourceUpdates".equals(action)) {
+                JSONArray updates = this.getResourceUpdates();
+                cc.success(updates);
             } else {
                 Log.e(TAG, "Unknown action: " + action);
                 cc.error("Unknown action: " + action);
