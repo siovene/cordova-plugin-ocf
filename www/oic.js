@@ -121,7 +121,7 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
         }
 
         exec(successCallback, errorCallback, "OicPlugin", "getResourceUpdates", []);
-    }, 10000);
+    }, 2000);
 
     module.exports = oic;
 });
