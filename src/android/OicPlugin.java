@@ -31,16 +31,26 @@ public class OicPlugin extends CordovaPlugin {
         }
     }
 
-    private void findResources(JSONArray args, CallbackContext cc)
-        throws JSONException
-    {
-        this.backend.findResources(args, cc);
+    private void findResources(final JSONArray args, final CallbackContext cc) {
+        final OicPlugin self = this;
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                try {
+                    self.backend.findResources(args, cc);
+                } catch (JSONException e) {
+                    cc.error("Error parsing arguments: " + e.getMessage());
+                }
+            }
+        });
     }
 
-    private void findDevices(CallbackContext cc)
-        throws JSONException
-    {
-        this.backend.findDevices(cc);
+    private void findDevices(final CallbackContext cc) {
+        final OicPlugin self = this;
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                self.backend.findDevices(cc);
+            }
+        });
     }
 
     private void updateResource(JSONArray args, CallbackContext cc)
