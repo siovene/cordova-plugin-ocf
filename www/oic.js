@@ -7,6 +7,14 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
     **************************************************************************/
     var OicPlugin = function() {
         this.backend = "iotivity";
+        this.resources = [];
+    }
+
+    OicPlugin.prototype.__compareResources__ = function(a, b) {
+        var aKey = a.id.deviceId + a.id.resourcePath,
+            bKey = b.id.deviceId + b.id.resourcePath;
+
+        return aKey === bKey;
     }
 
     OicPlugin.prototype.setBackend = function(backend) {
@@ -41,7 +49,18 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
                     resolve();
                 } else {
                     // Event passed: this is a "resource found" callback.
-                    self.onresourcefound(event);
+                    var i, found = false;
+
+                    for (i = 0; i < self.resources.length; i++) {
+                        if (self.__compareResources__(self.resources[i], event.resource)) {
+                            found = true;
+                        }
+                    }
+
+                    if (!found) {
+                        self.resources.push(event.resource);
+                        self.onresourcefound(event);
+                    }
                 }
             }
 
@@ -81,13 +100,7 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
 
         return new Promise(function(resolve, reject) {
             function successCallback(event) {
-                if (event === "OK") {
-                    // No event, this is just the native call completing.
-                    resolve();
-                } else {
-                    // Event passed: this is an "onupdate" callback.
-                    self.onupdate(event);
-                }
+                resolve();
             }
 
             function errorCallback(error) {
@@ -100,7 +113,6 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
 
     OicPlugin.prototype.onresourcefound = function(event) {};
     OicPlugin.prototype.ondevicefound = function(event) {};
-    OicPlugin.prototype.onupdate = function(event) {};
 
     /**************************************************************************
     *  Create the plugin and get things moving.                               *
@@ -111,8 +123,18 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
     // To get resource update events, we need to poll from the JS side.
     setInterval(function() {
         function successCallback(updates) {
-            if (updates.length > 0) {
-                oic.onupdate({updates: updates});
+            var i, j, update, resource;
+
+            for (i = 0; i < updates.length; i++) {
+                update = updates[i];
+                for (j = 0; j < oic.resources.length; j++) {
+                    resource = oic.resources[j];
+                    if (Object.keys(update)[0] === resource.id.deviceId + resource.id.resourcePath) {
+                        if (resource.onupdate !== undefined) {
+                            resource.onupdate({updates: updates});
+                        }
+                    }
+                }
             }
         }
 

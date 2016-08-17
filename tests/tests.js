@@ -34,6 +34,7 @@ exports.defineAutoTests = function() {
         });
 
         it('findResources works', function(done) {
+            oic.resources = [];
             expect(oic.findResources).toBeDefined();
             oic.setBackend("mock").then(function() {
                 oic.onresourcefound = function(event) {
@@ -48,10 +49,11 @@ exports.defineAutoTests = function() {
         it('findResources with options works', function(done) {
             var options = {
                 deviceId: "127.0.0.1",
-                resourcePath: "/",
+                resourcePath: "/findResources-test",
                 resourceTypes: ["test1"]
             };
 
+            oic.resources = [];
             expect(oic.findResources).toBeDefined();
             oic.setBackend("mock").then(function() {
                 oic.onresourcefound = function(event) {
@@ -102,16 +104,33 @@ exports.defineAutoTests = function() {
         });
 
         it('update works', function(done) {
-            expect(oic.update).toBeDefined();
+            oic.resources = [];
             oic.setBackend("mock").then(function() {
-                oic.onupdate = function(event) {
-                    expect(event).toBeDefined();
-                    expect(event.updates).toBeDefined();
-                    expect(event.updates.id.deviceId).toBe("foo");
-                    done();
-                }
-                oic.update({"id": {"deviceId": "foo"}}).then(function success() {
-                    expect(true).toBe(true);
+                oic.onresourcefound = function(event) {
+                    event.resource.onupdate = function(event) {
+                        expect(event.updates).toBeDefined();
+                        expect(event.updates.length).toBe(1);
+                        expect(event.updates[0]["127.0.0.1/update-test"].foo).toBe("bar");
+                        done();
+                    };
+
+                    oic.update({
+                        "id": {
+                            "deviceId": "127.0.0.1",
+                            "resourcePath": "/update-test"
+                        },
+                        "properties": {
+                            "foo": "bar"
+                        }
+                    }).then(function success(event) {
+                        expect(true).toBe(true);
+                    });
+                };
+
+                oic.findResources({
+                    deviceId: "127.0.0.1",
+                    resourcePath: "/update-test",
+                    resourceTypes: ["test1"]
                 });
             });
         });

@@ -2,6 +2,9 @@ package com.intel.cordova.plugin.oic;
 
 // Java
 import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 // Cordova
 import org.apache.cordova.CallbackContext;
@@ -18,6 +21,9 @@ import org.json.JSONObject;
 
 
 public class OicBackendMock implements OicBackendInterface {
+    private List<Map<OicResource, OicResourceRepresentation> > resourceUpdates =
+        new ArrayList<Map<OicResource, OicResourceRepresentation> >();
+
     public OicBackendMock(OicPlugin plugin) {
     }
 
@@ -81,16 +87,33 @@ public class OicBackendMock implements OicBackendInterface {
     public void updateResource(JSONArray args, CallbackContext cc)
         throws JSONException
     {
-        Log.d("OIC", args.toString());
-        OicResource updates = OicResource.fromJSON(args.getJSONObject(0));
-        OicResourceUpdateEvent ev = new OicResourceUpdateEvent(updates);
+        OicResource resource = OicResource.fromJSON(args.getJSONObject(0));
+        OicResourceRepresentation repr = resource.getProperties();
+
+        Map<OicResource, OicResourceRepresentation> update =
+            new HashMap<OicResource, OicResourceRepresentation>();
+        update.put(resource, repr);
+        this.resourceUpdates.add(update);
+
+        OicResourceUpdateEvent ev = new OicResourceUpdateEvent(resource);
         PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
-        Log.d("OIC", ev.toJSON().toString());
         result.setKeepCallback(true);
         cc.sendPluginResult(result);
     }
 
     public JSONArray getResourceUpdates() throws JSONException {
-        return new JSONArray();
+        JSONArray updates = new JSONArray();
+        for(Map<OicResource, OicResourceRepresentation> map: this.resourceUpdates) {
+            for(Map.Entry<OicResource, OicResourceRepresentation> entry: map.entrySet()) {
+                JSONObject obj = new JSONObject();
+                obj.put(
+                    entry.getKey().getId().getUniqueKey(),
+                    entry.getValue().toJSON());
+                updates.put(obj);
+            }
+        }
+
+        this.resourceUpdates.clear();
+        return updates;
     }
 }
