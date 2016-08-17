@@ -1,0 +1,25 @@
+{
+  "name": "cordova-plugin-oic",
+  "version": "0.4.0",
+  "description": "Cordova OIC Plugin",
+  "cordova": {
+    "id": "cordova-plugin-oic",
+    "platforms": [
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/01org/cordova-plugin-ocf.git"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "author": "Salvatore Iovene",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/01org/cordova-plugin-ocf/issues"
+  },
+  "homepage": "https://github.com/01org/cordova-plugin-ocf#readme"
+}
