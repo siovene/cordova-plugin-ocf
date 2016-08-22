@@ -24,7 +24,7 @@ file](https://github.com/siovene/cordova-plugin-oic-demo/blob/master/README.md).
 
 ## Running tests
 
-This plugin contains a test suite that runs as a Cordova app. Pleae find it at
+This plugin contains a test suite that runs as a Cordova app. Please find it at
 the [cordova-plugin-oic-tests project
 page](https://github.com/siovene/cordova-plugin-oic-tests).
 
