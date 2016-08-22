@@ -37,11 +37,11 @@ var plugin = cordova.require('cordova/plugin/oic');
 plugin.onresourcefound = function(event) {
     var resource = event.resource;
     // Do something with the resource.
-};
 
-plugin.onupdate = function(event) {
-    var updates = event.updates;
-    // Update your UI when changes have occurred.
+    resource.onupdate = function(event) {
+        var updates = event.updates;
+        // Update your UI when changes have occurred.
+    };
 };
 
 plugin.setBackend('iotivity').then(function() {
