@@ -1,23 +1,23 @@
-cordova.define("cordova/plugin/oic", function(require, exports, module) {
+cordova.define("cordova/plugin/ocf", function(require, exports, module) {
     var exec = require("cordova/exec");
 
     /**************************************************************************
-    *  OicPlugin                                                              *
+    *  OcfPlugin                                                              *
     *  The Cordova plugin.                                                    *
     **************************************************************************/
-    var OicPlugin = function() {
+    var OcfPlugin = function() {
         this.backend = "iotivity";
         this.resources = [];
     }
 
-    OicPlugin.prototype.__compareResources__ = function(a, b) {
+    OcfPlugin.prototype.__compareResources__ = function(a, b) {
         var aKey = a.id.deviceId + a.id.resourcePath,
             bKey = b.id.deviceId + b.id.resourcePath;
 
         return aKey === bKey;
     }
 
-    OicPlugin.prototype.setBackend = function(backend) {
+    OcfPlugin.prototype.setBackend = function(backend) {
         var self = this;
 
         return new Promise(function(resolve, reject) {
@@ -30,12 +30,12 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
                 reject(error);
             }
 
-            exec(successCallback, errorCallback, "OicPlugin", "setBackend",
+            exec(successCallback, errorCallback, "OcfPlugin", "setBackend",
                  [backend]);
         });
     }
 
-    OicPlugin.prototype.findResources = function(options) {
+    OcfPlugin.prototype.findResources = function(options) {
         var self = this;
 
         if (options === undefined) {
@@ -68,12 +68,12 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
                 reject(error);
             }
 
-            exec(successCallback, errorCallback, "OicPlugin", "findResources",
+            exec(successCallback, errorCallback, "OcfPlugin", "findResources",
                  [options]);
         });
     };
 
-    OicPlugin.prototype.findDevices = function() {
+    OcfPlugin.prototype.findDevices = function() {
         var self = this;
 
         return new Promise(function(resolve, reject) {
@@ -91,11 +91,11 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
                 reject(error);
             }
 
-            exec(successCallback, errorCallback, "OicPlugin", "findDevices", []);
+            exec(successCallback, errorCallback, "OcfPlugin", "findDevices", []);
         });
     };
 
-    OicPlugin.prototype.update = function(resource) {
+    OcfPlugin.prototype.update = function(resource) {
         var self = this;
 
         return new Promise(function(resolve, reject) {
@@ -107,18 +107,18 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
                 reject(error);
             }
 
-            exec(successCallback, errorCallback, "OicPlugin", "updateResource", [resource]);
+            exec(successCallback, errorCallback, "OcfPlugin", "updateResource", [resource]);
         });
     }
 
-    OicPlugin.prototype.onresourcefound = function(event) {};
-    OicPlugin.prototype.ondevicefound = function(event) {};
+    OcfPlugin.prototype.onresourcefound = function(event) {};
+    OcfPlugin.prototype.ondevicefound = function(event) {};
 
     /**************************************************************************
     *  Create the plugin and get things moving.                               *
     **************************************************************************/
 
-    var oic = new OicPlugin();
+    var ocf = new OcfPlugin();
 
     // To get resource update events, we need to poll from the JS side.
     setInterval(function() {
@@ -127,8 +127,8 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
 
             for (i = 0; i < updates.length; i++) {
                 update = updates[i];
-                for (j = 0; j < oic.resources.length; j++) {
-                    resource = oic.resources[j];
+                for (j = 0; j < ocf.resources.length; j++) {
+                    resource = ocf.resources[j];
                     if (Object.keys(update)[0] === resource.id.deviceId + resource.id.resourcePath) {
                         if (resource.onupdate !== undefined) {
                             resource.onupdate({updates: updates});
@@ -142,8 +142,8 @@ cordova.define("cordova/plugin/oic", function(require, exports, module) {
             console.error(error);
         }
 
-        exec(successCallback, errorCallback, "OicPlugin", "getResourceUpdates", []);
+        exec(successCallback, errorCallback, "OcfPlugin", "getResourceUpdates", []);
     }, 2000);
 
-    module.exports = oic;
+    module.exports = ocf;
 });

@@ -1,14 +1,14 @@
-package com.intel.cordova.plugin.oic;
+package com.intel.cordova.plugin.ocf;
 
 // Third party
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class OicDeviceEvent implements OicObjectInterface {
-    public OicDevice device;
+public class OcfDeviceEvent implements OcfObjectInterface {
+    public OcfDevice device;
 
-    public OicDeviceEvent(OicDevice device) {
+    public OcfDeviceEvent(OcfDevice device) {
         this.device = device;
     }
 

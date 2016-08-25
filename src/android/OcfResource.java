@@ -1,4 +1,4 @@
-package com.intel.cordova.plugin.oic;
+package com.intel.cordova.plugin.ocf;
 
 // Java
 import java.util.ArrayList;
@@ -13,39 +13,39 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class OicResource implements OicObjectInterface
+public class OcfResource implements OcfObjectInterface
 {
-    private OicResourceId id;
+    private OcfResourceId id;
     private ArrayList<String> resourceTypes;
     private ArrayList<String> interfaces;
     private ArrayList<String> mediaTypes;
-    private OicResourceRepresentation properties;
+    private OcfResourceRepresentation properties;
     private boolean observable;
 
-    public OicResource() {
-        this.id  = new OicResourceId();
+    public OcfResource() {
+        this.id  = new OcfResourceId();
         this.resourceTypes = new ArrayList<String>();
         this.interfaces = new ArrayList<String>();
         this.mediaTypes = new ArrayList<String>();
-        this.properties = new OicResourceRepresentation();
+        this.properties = new OcfResourceRepresentation();
         this.observable = false;
     }
 
-    public OicResource(OicResourceId id) {
+    public OcfResource(OcfResourceId id) {
         this.id = id;
-        this.properties = new OicResourceRepresentation();
+        this.properties = new OcfResourceRepresentation();
     }
 
-    public OicResource(String deviceId, String resourcePath) {
-        this.id = new OicResourceId(deviceId, resourcePath);
-        this.properties = new OicResourceRepresentation();
+    public OcfResource(String deviceId, String resourcePath) {
+        this.id = new OcfResourceId(deviceId, resourcePath);
+        this.properties = new OcfResourceRepresentation();
     }
 
     // ------------------------------------------------------------------------
     // Getters
     // ------------------------------------------------------------------------
 
-    public OicResourceId getId() { return this.id; }
+    public OcfResourceId getId() { return this.id; }
 
     public ArrayList<String> getResourceTypes() { return this.resourceTypes; }
 
@@ -53,7 +53,7 @@ public class OicResource implements OicObjectInterface
 
     public ArrayList<String> getMediaTypes() { return this.mediaTypes; }
 
-    public OicResourceRepresentation getProperties() { return this.properties; }
+    public OcfResourceRepresentation getProperties() { return this.properties; }
 
     public boolean getObservable() { return this.observable; }
 
@@ -93,11 +93,11 @@ public class OicResource implements OicObjectInterface
         return o;
     }
 
-    public static OicResource fromJSON(JSONObject obj) throws JSONException {
-        Log.d("OIC", obj.toString());
-        OicResource resource = new OicResource();
+    public static OcfResource fromJSON(JSONObject obj) throws JSONException {
+        Log.d("OCF", obj.toString());
+        OcfResource resource = new OcfResource();
 
-        resource.id = OicResourceId.fromJSON(obj.optJSONObject("id"));
+        resource.id = OcfResourceId.fromJSON(obj.optJSONObject("id"));
 
         JSONArray resourceTypesJson = obj.optJSONArray("resourceTypes");
         if (resourceTypesJson != null) {
@@ -125,7 +125,7 @@ public class OicResource implements OicObjectInterface
 
         JSONObject propertiesJson = obj.optJSONObject("properties");
         if (propertiesJson != null) {
-            resource.properties = OicResourceRepresentation.fromJSON(
+            resource.properties = OcfResourceRepresentation.fromJSON(
                 propertiesJson);
         }
 

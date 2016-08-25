@@ -1,4 +1,4 @@
-package com.intel.cordova.plugin.oic;
+package com.intel.cordova.plugin.ocf;
 
 // Android
 import android.content.Context;
@@ -12,7 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public interface OicBackendInterface {
+public interface OcfBackendInterface {
     public void findResources(JSONArray args, CallbackContext cc)
         throws JSONException;
     public void findDevices(CallbackContext cc);

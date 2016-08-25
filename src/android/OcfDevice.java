@@ -1,4 +1,4 @@
-package com.intel.cordova.plugin.oic;
+package com.intel.cordova.plugin.ocf;
 
 // Java
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class OicDevice implements OicObjectInterface {
+public class OcfDevice implements OcfObjectInterface {
     private String uuid;
     private String url;
     private String name;

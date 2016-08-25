@@ -1,4 +1,4 @@
-package com.intel.cordova.plugin.oic;
+package com.intel.cordova.plugin.ocf;
 
 // Java
 import java.util.Iterator;
@@ -13,10 +13,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class OicResourceRepresentation implements OicObjectInterface {
+public class OcfResourceRepresentation implements OcfObjectInterface {
     private Map<String, Object> properties;
 
-    public OicResourceRepresentation() {
+    public OcfResourceRepresentation() {
         this.properties = new HashMap<String, Object>();
     }
 
@@ -51,10 +51,10 @@ public class OicResourceRepresentation implements OicObjectInterface {
         return o;
     }
 
-    public static OicResourceRepresentation fromJSON(JSONObject obj)
+    public static OcfResourceRepresentation fromJSON(JSONObject obj)
         throws JSONException
     {
-        OicResourceRepresentation repr = new OicResourceRepresentation();
+        OcfResourceRepresentation repr = new OcfResourceRepresentation();
         Iterator<String> it = obj.keys();
         while(it.hasNext()) {
             String key = it.next();

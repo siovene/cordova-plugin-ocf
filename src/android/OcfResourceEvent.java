@@ -1,14 +1,14 @@
-package com.intel.cordova.plugin.oic;
+package com.intel.cordova.plugin.ocf;
 
 // Third party
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class OicResourceEvent implements OicObjectInterface {
-    public OicResource resource;
+public class OcfResourceEvent implements OcfObjectInterface {
+    public OcfResource resource;
 
-    public OicResourceEvent(OicResource resource) {
+    public OcfResourceEvent(OcfResource resource) {
         this.resource = resource;
     }
 

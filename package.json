@@ -1,9 +1,9 @@
 {
-  "name": "cordova-plugin-oic",
+  "name": "cordova-plugin-ocf",
   "version": "0.4.0",
-  "description": "Cordova OIC Plugin",
+  "description": "Cordova OCF Plugin",
   "cordova": {
-    "id": "cordova-plugin-oic",
+    "id": "cordova-plugin-ocf",
     "platforms": [
       "android"
     ]

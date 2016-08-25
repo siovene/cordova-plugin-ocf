@@ -1,4 +1,4 @@
-package com.intel.cordova.plugin.oic;
+package com.intel.cordova.plugin.ocf;
 
 // Java
 import java.util.ArrayList;
@@ -35,30 +35,30 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class OicBackendIotivity
-    implements OicBackendInterface,
+public class OcfBackendIotivity
+    implements OcfBackendInterface,
                OcPlatform.OnDeviceFoundListener,
                OcPlatform.OnResourceFoundListener
 {
     // Needed to associate OcResource.On{Get,Post̋}Listener instances to an
-    // OicResource without placing Iotivity specific code in there.
-    private static class OicResourceWrapper
+    // OcfResource without placing Iotivity specific code in there.
+    private static class OcfResourceWrapper
         implements OcResource.OnGetListener, OcResource.OnPutListener,
                    OcResource.OnObserveListener
     {
-        private OicBackendIotivity backend;
+        private OcfBackendIotivity backend;
         private OcResource nativeResource;
-        private OicResource oicResource;
+        private OcfResource ocfResource;
         private boolean getFinished = false;
         private boolean putFinished = false;
 
-        public OicResourceWrapper(
-            OicBackendIotivity backend, OcResource nativeResource,
-            OicResource oicResource)
+        public OcfResourceWrapper(
+            OcfBackendIotivity backend, OcResource nativeResource,
+            OcfResource ocfResource)
         {
             this.backend = backend;
             this.nativeResource = nativeResource;
-            this.oicResource = oicResource;
+            this.ocfResource = ocfResource;
         }
 
         public boolean isGetFinished() {
@@ -78,14 +78,14 @@ public class OicBackendIotivity
             for(Map.Entry<String, Object> entry: values.entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
-                oicResource.setProperty(key, value);
+                ocfResource.setProperty(key, value);
             }
             this.getFinished = true;
         }
 
         @Override
         public synchronized void onGetFailed(java.lang.Throwable ex) {
-            Log.e("CordovaPluginOIC", "onGetFailed");
+            Log.e("CordovaPluginOCF", "onGetFailed");
             this.getFinished = true;
         }
 
@@ -99,7 +99,7 @@ public class OicBackendIotivity
 
         @Override
         public synchronized void onPutFailed(java.lang.Throwable ex) {
-            Log.e("CordovaPluginOIC", "onPutFailed");
+            Log.e("CordovaPluginOCF", "onPutFailed");
             this.putFinished = true;
         }
 
@@ -109,15 +109,15 @@ public class OicBackendIotivity
                OcRepresentation ocRepresentation,
                int sequenceNumber)
         {
-            Log.d("CordovaPluginOIC", "onObserveCompleted: " + this.oicResource.getId().getUniqueKey());
+            Log.d("CordovaPluginOCF", "onObserveCompleted: " + this.ocfResource.getId().getUniqueKey());
             if (this.backend != null) {
-                this.backend.addResourceUpdate(this.oicResource, ocRepresentation);
+                this.backend.addResourceUpdate(this.ocfResource, ocRepresentation);
             }
         }
 
         @Override
         public synchronized void onObserveFailed(java.lang.Throwable ex) {
-            Log.e("CordovaPluginOIC", "onObserveFailed");
+            Log.e("CordovaPluginOCF", "onObserveFailed");
         }
     }
 
@@ -130,13 +130,13 @@ public class OicBackendIotivity
     private static final String OC_RSRVD_SPEC_VERSION = "lcv";
     private static final String OC_RSRVD_DATA_MODEL_VERSION = "dmv";
 
-    private OicPlugin plugin;
+    private OcfPlugin plugin;
     private CallbackContext callbackContext;
     private List<String> observedResources = new ArrayList<String>();
-    private List<Map<OicResource, OicResourceRepresentation> > resourceUpdates =
-        new ArrayList<Map<OicResource, OicResourceRepresentation> >();
+    private List<Map<OcfResource, OcfResourceRepresentation> > resourceUpdates =
+        new ArrayList<Map<OcfResource, OcfResourceRepresentation> >();
 
-    public OicBackendIotivity(OicPlugin plugin) {
+    public OcfBackendIotivity(OcfPlugin plugin) {
         this.plugin = plugin;
 
         PlatformConfig platformConfig = new PlatformConfig(
@@ -150,10 +150,10 @@ public class OicBackendIotivity
         OcPlatform.Configure(platformConfig);
     }
 
-    public void addResourceUpdate(OicResource resource, OcRepresentation repr)
+    public void addResourceUpdate(OcfResource resource, OcRepresentation repr)
     {
-        Map<OicResource, OicResourceRepresentation> update =
-            new HashMap<OicResource, OicResourceRepresentation>();
+        Map<OcfResource, OcfResourceRepresentation> update =
+            new HashMap<OcfResource, OcfResourceRepresentation>();
 
         update.put(resource, this.representationFromNative(repr));
         this.resourceUpdates.add(update);
@@ -161,10 +161,10 @@ public class OicBackendIotivity
 
     // ------------------------------------------------------------------------
     // TODO: conversion functions should be in backend specific subclasses of
-    // Oic* classes.
+    // Ocf* classes.
     // ------------------------------------------------------------------------
 
-    private static OicResource resourceFromNative(OcResource nativeResource) {
+    private static OcfResource resourceFromNative(OcResource nativeResource) {
         int elapsed = 0;
         final int timeout = 5000;
         final int sleepTime = 100;
@@ -172,15 +172,15 @@ public class OicBackendIotivity
         String deviceId = nativeResource.getHost();
         String resourcePath = nativeResource.getUri();
 
-        OicResource oicResource = new OicResource(nativeResource.getHost(), nativeResource.getUri());
-        oicResource.setResourceTypes(new ArrayList<String> (nativeResource.getResourceTypes()));
-        oicResource.setInterfaces(new ArrayList<String> (nativeResource.getResourceInterfaces()));
-        oicResource.setObservable(nativeResource.isObservable());
+        OcfResource ocfResource = new OcfResource(nativeResource.getHost(), nativeResource.getUri());
+        ocfResource.setResourceTypes(new ArrayList<String> (nativeResource.getResourceTypes()));
+        ocfResource.setInterfaces(new ArrayList<String> (nativeResource.getResourceInterfaces()));
+        ocfResource.setObservable(nativeResource.isObservable());
 
-        OicResourceWrapper resourceWrapper = new OicResourceWrapper(null, nativeResource, oicResource);
+        OcfResourceWrapper resourceWrapper = new OcfResourceWrapper(null, nativeResource, ocfResource);
 
         // Get all poperties
-        Log.d("CordovaPluginOIC", "==========================================================");
+        Log.d("CordovaPluginOCF", "==========================================================");
         try {
             nativeResource.get(new HashMap<String, String>(), resourceWrapper);
             while(resourceWrapper.isGetFinished() == false && elapsed <= timeout) {
@@ -188,43 +188,43 @@ public class OicBackendIotivity
                 elapsed += sleepTime;
             }
         } catch (OcException ex) {
-            Log.e("CordovaPluginOIC", ex.toString());
+            Log.e("CordovaPluginOCF", ex.toString());
         } catch (InterruptedException ex) {
         }
 
-        return oicResource;
+        return ocfResource;
     }
 
-    private static OcResource resourceToNative(OicResource oicResource) {
+    private static OcResource resourceToNative(OcfResource ocfResource) {
         OcResource nativeResource = null;
-        String url = oicResource.getId().getDeviceId();
-        String host = oicResource.getId().getResourcePath();
-        ArrayList<String> resourceTypes = oicResource.getResourceTypes();
-        ArrayList<String> interfaces = oicResource.getInterfaces();
+        String url = ocfResource.getId().getDeviceId();
+        String host = ocfResource.getId().getResourcePath();
+        ArrayList<String> resourceTypes = ocfResource.getResourceTypes();
+        ArrayList<String> interfaces = ocfResource.getInterfaces();
 
-        Log.d("CordovaPluginOIC", "creating native resource...");
-        Log.d("CordovaPluginOIC", "url = " + url);
-        Log.d("CordovaPluginOIC", "host = " + host);
-        Log.d("CordovaPluginOIC", "resourceTypes size = " + resourceTypes.size());
-        Log.d("CordovaPluginOIC", "interfaces size = " + interfaces.size());
+        Log.d("CordovaPluginOCF", "creating native resource...");
+        Log.d("CordovaPluginOCF", "url = " + url);
+        Log.d("CordovaPluginOCF", "host = " + host);
+        Log.d("CordovaPluginOCF", "resourceTypes size = " + resourceTypes.size());
+        Log.d("CordovaPluginOCF", "interfaces size = " + interfaces.size());
         try {
             nativeResource = OcPlatform.constructResourceObject(
-                oicResource.getId().getDeviceId(),
-                oicResource.getId().getResourcePath(),
+                ocfResource.getId().getDeviceId(),
+                ocfResource.getId().getResourcePath(),
                 EnumSet.of(OcConnectivityType.CT_DEFAULT),
                 false,
-                oicResource.getResourceTypes(),
-                oicResource.getInterfaces());
+                ocfResource.getResourceTypes(),
+                ocfResource.getInterfaces());
         } catch (OcException ex) {
-            Log.e("CordovaPluginOIC", ex.toString());
+            Log.e("CordovaPluginOCF", ex.toString());
         }
 
-        Log.d("CordovaPluginOIC", "returning native resource...");
+        Log.d("CordovaPluginOCF", "returning native resource...");
         return nativeResource;
     }
 
     private static OcRepresentation representationToNative(
-        OicResourceRepresentation repr)
+        OcfResourceRepresentation repr)
     {
         OcRepresentation nativeRepr = new OcRepresentation();
         for (Map.Entry<String, Object> entry : repr.getProperties().entrySet())
@@ -251,7 +251,7 @@ public class OicBackendIotivity
                     nativeRepr.setValue(key, i);
                     done = true;
                 } catch(NumberFormatException ex) {
-                    Log.w("CordovaPluginOIC", "Value is not an integer");
+                    Log.w("CordovaPluginOCF", "Value is not an integer");
                 }
 
                 try {
@@ -259,24 +259,24 @@ public class OicBackendIotivity
                     nativeRepr.setValue(key, d);
                     done = true;
                 } catch(NumberFormatException ex) {
-                    Log.w("CordovaPluginOIC", "Value is not a double");
+                    Log.w("CordovaPluginOCF", "Value is not a double");
                 }
 
                 if (!done) {
                     nativeRepr.setValue(key, stringValue);
                 }
             } catch(OcException ex) {
-                Log.e("CordovaPluginOIC", ex.toString());
+                Log.e("CordovaPluginOCF", ex.toString());
             }
         }
 
         return nativeRepr;
     }
 
-    private static OicResourceRepresentation representationFromNative(
+    private static OcfResourceRepresentation representationFromNative(
         OcRepresentation nativeRepr)
     {
-        OicResourceRepresentation repr = new OicResourceRepresentation();
+        OcfResourceRepresentation repr = new OcfResourceRepresentation();
         Map<String, Object> values = nativeRepr.getValues();
         for (Map.Entry<String, Object> entry: values.entrySet()) {
             repr.setValue(entry.getKey(), entry.getValue());
@@ -286,7 +286,7 @@ public class OicBackendIotivity
 
     @Override
     public void onDeviceFound(final OcRepresentation repr) {
-        OicDevice device = new OicDevice();
+        OcfDevice device = new OcfDevice();
         try {
             device.setUuid((String) repr.getValue(OC_RSRVD_DEVICE_ID));
             device.setName((String) repr.getValue(OC_RSRVD_DEVICE_NAME));
@@ -295,10 +295,10 @@ public class OicBackendIotivity
                 add((String) repr.getValue(OC_RSRVD_DATA_MODEL_VERSION));
             }});
         } catch (OcException ex) {
-            Log.e("CordovaPluginOIC", "Error reading OcRepresentation");
+            Log.e("CordovaPluginOCF", "Error reading OcRepresentation");
         }
 
-        OicDeviceEvent ev = new OicDeviceEvent(device);
+        OcfDeviceEvent ev = new OcfDeviceEvent(device);
         try {
             PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
             result.setKeepCallback(true);
@@ -312,7 +312,7 @@ public class OicBackendIotivity
         this.findDevicesCallbackContext = cc;
         try {
             OcPlatform.getDeviceInfo(
-                "", "/oic/d", EnumSet.of(OcConnectivityType.CT_DEFAULT), this);
+                "", "/ocf/d", EnumSet.of(OcConnectivityType.CT_DEFAULT), this);
         } catch (OcException ex) {
             this.findDevicesCallbackContext.error(ex.getMessage());
         }
@@ -324,27 +324,27 @@ public class OicBackendIotivity
         String resourcePath = resource.getUri();
         String key = host + resourcePath;
 
-        Log.d("CordovaPluginOIC", "Found resource: " + key);
+        Log.d("CordovaPluginOCF", "Found resource: " + key);
 
-        if (resourcePath.equals("/oic/p") || resourcePath.equals("/oic/d")) {
+        if (resourcePath.equals("/ocf/p") || resourcePath.equals("/ocf/d")) {
             return;
         }
 
 
-        OicResource oicResource = this.resourceFromNative(resource);
-        OicResourceWrapper resourceWrapper = new OicResourceWrapper(this, resource, oicResource);
+        OcfResource ocfResource = this.resourceFromNative(resource);
+        OcfResourceWrapper resourceWrapper = new OcfResourceWrapper(this, resource, ocfResource);
 
         if (resource.isObservable() && ! this.observedResources.contains(key)) {
             try {
-                Log.d("CordovaPluginOIC", "Observing resource: " + key);
+                Log.d("CordovaPluginOCF", "Observing resource: " + key);
                 resource.observe(ObserveType.OBSERVE, new HashMap<String, String>(), resourceWrapper);
                 this.observedResources.add(key);
             } catch (OcException e) {
-                Log.e("CordovaPluginOIC", "Unable to observe resoure");
+                Log.e("CordovaPluginOCF", "Unable to observe resoure");
             }
         }
 
-        OicResourceEvent ev = new OicResourceEvent(oicResource);
+        OcfResourceEvent ev = new OcfResourceEvent(ocfResource);
 
         try {
             PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
@@ -381,14 +381,14 @@ public class OicBackendIotivity
         final int timeout = 5000;
         final int sleepTime = 100;
 
-        OicResource oicResource = OicResource.fromJSON(args.getJSONObject(0));
-        OcResource nativeResource = OicBackendIotivity.resourceToNative(oicResource);
+        OcfResource ocfResource = OcfResource.fromJSON(args.getJSONObject(0));
+        OcResource nativeResource = OcfBackendIotivity.resourceToNative(ocfResource);
         OcRepresentation nativeRepr = this.representationToNative(
-            oicResource.getProperties());
-        OicResourceWrapper resourceWrapper = new OicResourceWrapper(
-            this, nativeResource, oicResource);
+            ocfResource.getProperties());
+        OcfResourceWrapper resourceWrapper = new OcfResourceWrapper(
+            this, nativeResource, ocfResource);
 
-        Log.d("CordovaPluginOIC", "Updating resource: " +  oicResource.toJSON().toString());
+        Log.d("CordovaPluginOCF", "Updating resource: " +  ocfResource.toJSON().toString());
 
         try {
             nativeResource.put(
@@ -398,7 +398,7 @@ public class OicBackendIotivity
                 elapsed += sleepTime;
             }
         } catch (OcException ex) {
-            Log.e("CordovaPluginOIC", ex.toString());
+            Log.e("CordovaPluginOCF", ex.toString());
         } catch (InterruptedException ex) {
         }
 
@@ -414,8 +414,8 @@ public class OicBackendIotivity
 
     public JSONArray getResourceUpdates() throws JSONException {
         JSONArray updates = new JSONArray();
-        for(Map<OicResource, OicResourceRepresentation> map: this.resourceUpdates) {
-            for(Map.Entry<OicResource, OicResourceRepresentation> entry: map.entrySet()) {
+        for(Map<OcfResource, OcfResourceRepresentation> map: this.resourceUpdates) {
+            for(Map.Entry<OcfResource, OcfResourceRepresentation> entry: map.entrySet()) {
                 JSONObject obj = new JSONObject();
                 obj.put(
                     entry.getKey().getId().getUniqueKey(),

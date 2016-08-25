@@ -1,13 +1,13 @@
-# cordova-plugin-oic
+# cordova-plugin-ocf
 
-A Cordova plugin to expose the [OIC
+A Cordova plugin to expose the [OCF
 specification](https://openconnectivity.org/resources/specifications) to cross
 platform applications written in JavaScript.
 
 
 ## Purpose
 
-To provide a plugin which allows using the OIC specification across all mobile
+To provide a plugin which allows using the OCF specification across all mobile
 platforms without requiring the user to deal with implementing and compiling
 the native code for each operating system.
 
@@ -17,22 +17,21 @@ Current platforms:
 ## Building
 
 As this is a Cordova plugin, you will build it as part of an app. For a demo
-app, please see the [cordova-plugin-oic-demo
-app](https://github.com/siovene/cordova-plugin-oic-demo).  Build instructions
+app, please see the [cordova-plugin-ocf-demo
+app](https://github.com/siovene/cordova-plugin-ocf-demo).  Build instructions
 are located at [its README
-file](https://github.com/siovene/cordova-plugin-oic-demo/blob/master/README.md).
+file](https://github.com/siovene/cordova-plugin-ocf-demo/blob/master/README.md).
 
 ## Running tests
 
-This plugin contains a test suite that runs as a Cordova app. Please find it at
-the [cordova-plugin-oic-tests project
-page](https://github.com/siovene/cordova-plugin-oic-tests).
-
+This plugin contains a test suite that runs as a Cordova app. Pleae find it at
+the [cordova-plugin-ocf-tests project
+page](https://github.com/siovene/cordova-plugin-ocf-tests).
 
 ## Quick start with the API
 
 ```javascript
-var plugin = cordova.require('cordova/plugin/oic');
+var plugin = cordova.require('cordova/plugin/ocf');
 
 plugin.onresourcefound = function(event) {
     var resource = event.resource;
@@ -49,5 +48,5 @@ plugin.setBackend('iotivity').then(function() {
 });
 ```
 
-More details can be found at the [OIC JS spec for the Soletta
-project](https://github.com/zolkis/soletta/blob/master/doc/js-spec/oic.md).
+More details can be found at the [OCF JS spec for the Soletta
+project](https://github.com/zolkis/soletta/blob/master/doc/js-spec/ocf.md).

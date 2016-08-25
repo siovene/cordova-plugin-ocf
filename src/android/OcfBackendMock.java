@@ -1,4 +1,4 @@
-package com.intel.cordova.plugin.oic;
+package com.intel.cordova.plugin.ocf;
 
 // Java
 import java.util.ArrayList;
@@ -20,18 +20,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class OicBackendMock implements OicBackendInterface {
-    private List<Map<OicResource, OicResourceRepresentation> > resourceUpdates =
-        new ArrayList<Map<OicResource, OicResourceRepresentation> >();
+public class OcfBackendMock implements OcfBackendInterface {
+    private List<Map<OcfResource, OcfResourceRepresentation> > resourceUpdates =
+        new ArrayList<Map<OcfResource, OcfResourceRepresentation> >();
 
-    public OicBackendMock(OicPlugin plugin) {
+    public OcfBackendMock(OcfPlugin plugin) {
     }
 
     public void findResources(JSONArray args, CallbackContext cc)
             throws JSONException
     {
         final JSONObject obj = args.getJSONObject(0);
-        OicResource res = new OicResource(
+        OcfResource res = new OcfResource(
             obj.optString("deviceId"), obj.optString("resourcePath"));
 
         res.setResourceTypes(new ArrayList<String>() {{
@@ -56,14 +56,14 @@ public class OicBackendMock implements OicBackendInterface {
 
         res.setObservable(false);
 
-        OicResourceEvent ev = new OicResourceEvent(res);
+        OcfResourceEvent ev = new OcfResourceEvent(res);
         PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
         result.setKeepCallback(true);
         cc.sendPluginResult(result);
     }
 
     public void findDevices(CallbackContext cc) {
-        OicDevice device = new OicDevice();
+        OcfDevice device = new OcfDevice();
         device.setUuid("1234567890");
         device.setUrl("http://example.com/");
         device.setName("Device name");
@@ -74,7 +74,7 @@ public class OicBackendMock implements OicBackendInterface {
         device.setCoreSpecVersion("0.1.0");
         device.setRole("server");
 
-        OicDeviceEvent ev = new OicDeviceEvent(device);
+        OcfDeviceEvent ev = new OcfDeviceEvent(device);
         try {
             PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
             result.setKeepCallback(true);
@@ -87,15 +87,15 @@ public class OicBackendMock implements OicBackendInterface {
     public void updateResource(JSONArray args, CallbackContext cc)
         throws JSONException
     {
-        OicResource resource = OicResource.fromJSON(args.getJSONObject(0));
-        OicResourceRepresentation repr = resource.getProperties();
+        OcfResource resource = OcfResource.fromJSON(args.getJSONObject(0));
+        OcfResourceRepresentation repr = resource.getProperties();
 
-        Map<OicResource, OicResourceRepresentation> update =
-            new HashMap<OicResource, OicResourceRepresentation>();
+        Map<OcfResource, OcfResourceRepresentation> update =
+            new HashMap<OcfResource, OcfResourceRepresentation>();
         update.put(resource, repr);
         this.resourceUpdates.add(update);
 
-        OicResourceUpdateEvent ev = new OicResourceUpdateEvent(resource);
+        OcfResourceUpdateEvent ev = new OcfResourceUpdateEvent(resource);
         PluginResult result = new PluginResult(PluginResult.Status.OK, ev.toJSON());
         result.setKeepCallback(true);
         cc.sendPluginResult(result);
@@ -103,8 +103,8 @@ public class OicBackendMock implements OicBackendInterface {
 
     public JSONArray getResourceUpdates() throws JSONException {
         JSONArray updates = new JSONArray();
-        for(Map<OicResource, OicResourceRepresentation> map: this.resourceUpdates) {
-            for(Map.Entry<OicResource, OicResourceRepresentation> entry: map.entrySet()) {
+        for(Map<OcfResource, OcfResourceRepresentation> map: this.resourceUpdates) {
+            for(Map.Entry<OcfResource, OcfResourceRepresentation> entry: map.entrySet()) {
                 JSONObject obj = new JSONObject();
                 obj.put(
                     entry.getKey().getId().getUniqueKey(),

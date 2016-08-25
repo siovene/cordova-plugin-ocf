@@ -1,17 +1,17 @@
-package com.intel.cordova.plugin.oic;
+package com.intel.cordova.plugin.ocf;
 
 // Third party
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class OicResourceId implements OicObjectInterface {
+public class OcfResourceId implements OcfObjectInterface {
     private String deviceId;
     private String resourcePath;
 
-    public OicResourceId() {}
+    public OcfResourceId() {}
 
-    public OicResourceId(String deviceId, String resourcePath) {
+    public OcfResourceId(String deviceId, String resourcePath) {
         this.deviceId = deviceId;
         this.resourcePath = resourcePath;
     }
@@ -44,8 +44,8 @@ public class OicResourceId implements OicObjectInterface {
         return o;
     }
 
-    public static OicResourceId fromJSON(JSONObject obj) throws JSONException {
-        OicResourceId id = new OicResourceId();
+    public static OcfResourceId fromJSON(JSONObject obj) throws JSONException {
+        OcfResourceId id = new OcfResourceId();
 
         if (obj != null) {
             id.deviceId = obj.optString("deviceId");

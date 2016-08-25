@@ -1,15 +1,15 @@
 exports.defineAutoTests = function() {
-    var oic = cordova.require('cordova/plugin/oic'),
+    var ocf = cordova.require('cordova/plugin/ocf'),
         channel = cordova.require('cordova/channel');
 
-    describe('OIC Plugin test suite', function() {
-        it('oic is defined', function() {
-            expect(oic).toBeDefined();
+    describe('OCF Plugin test suite', function() {
+        it('ocf is defined', function() {
+            expect(ocf).toBeDefined();
         });
 
         it('setting invalid backend works', function(done) {
-            expect(oic.setBackend).toBeDefined();
-            oic.setBackend("foo").then(function() {
+            expect(ocf.setBackend).toBeDefined();
+            ocf.setBackend("foo").then(function() {
                 done(new Error("Promise should not be resolved"));
             }, function() {
                 // Promise is rejected
@@ -18,8 +18,8 @@ exports.defineAutoTests = function() {
         });
 
         it('setting valid backend works', function(done) {
-            expect(oic.setBackend).toBeDefined();
-            oic.setBackend("mock").then(function() {
+            expect(ocf.setBackend).toBeDefined();
+            ocf.setBackend("mock").then(function() {
                 done();
             }, function() {
                 // Promise is rejected
@@ -28,19 +28,19 @@ exports.defineAutoTests = function() {
         });
 
         it('setting onresourcefound works', function() {
-            expect(oic.onresourcefound).toBeDefined();
-            oic.onresourcefound = function(event) { return "foo"; }
-            expect(oic.onresourcefound()).toBe("foo");
+            expect(ocf.onresourcefound).toBeDefined();
+            ocf.onresourcefound = function(event) { return "foo"; }
+            expect(ocf.onresourcefound()).toBe("foo");
         });
 
         it('findResources works', function(done) {
-            oic.resources = [];
-            expect(oic.findResources).toBeDefined();
-            oic.setBackend("mock").then(function() {
-                oic.onresourcefound = function(event) {
+            ocf.resources = [];
+            expect(ocf.findResources).toBeDefined();
+            ocf.setBackend("mock").then(function() {
+                ocf.onresourcefound = function(event) {
                     done();
                 }
-                oic.findResources().then(function success() {
+                ocf.findResources().then(function success() {
                     expect(true).toBe(true);
                 });
             });
@@ -53,10 +53,10 @@ exports.defineAutoTests = function() {
                 resourceTypes: ["test1"]
             };
 
-            oic.resources = [];
-            expect(oic.findResources).toBeDefined();
-            oic.setBackend("mock").then(function() {
-                oic.onresourcefound = function(event) {
+            ocf.resources = [];
+            expect(ocf.findResources).toBeDefined();
+            ocf.setBackend("mock").then(function() {
+                ocf.onresourcefound = function(event) {
                     expect(event).toBeDefined()
                     expect(event.resource).toBeDefined();
                     expect(event.resource.id.deviceId).toBe(options.deviceId);
@@ -71,22 +71,22 @@ exports.defineAutoTests = function() {
                     expect(event.resource.observable).toBe(false);
                     done();
                 }
-                oic.findResources(options).then(function success() {
+                ocf.findResources(options).then(function success() {
                     expect(true).toBe(true);
                 });
             });
         });
 
         it('setting ondevicefound works', function() {
-            expect(oic.ondevicefound).toBeDefined();
-            oic.ondevicefound = function(event) { return "foo"; }
-            expect(oic.ondevicefound()).toBe("foo");
+            expect(ocf.ondevicefound).toBeDefined();
+            ocf.ondevicefound = function(event) { return "foo"; }
+            expect(ocf.ondevicefound()).toBe("foo");
         });
 
         it('findDevices works', function(done) {
-            expect(oic.findDevices).toBeDefined();
-            oic.setBackend("mock").then(function() {
-                oic.ondevicefound = function(event) {
+            expect(ocf.findDevices).toBeDefined();
+            ocf.setBackend("mock").then(function() {
+                ocf.ondevicefound = function(event) {
                     expect(event).toBeDefined();
                     expect(event.device).toBeDefined();
                     expect(event.device.uuid).toBe("1234567890");
@@ -97,16 +97,16 @@ exports.defineAutoTests = function() {
                     expect(event.device.role).toBe("server");
                     done();
                 }
-                oic.findDevices().then(function success() {
+                ocf.findDevices().then(function success() {
                     expect(true).toBe(true);
                 });
             });
         });
 
         it('update works', function(done) {
-            oic.resources = [];
-            oic.setBackend("mock").then(function() {
-                oic.onresourcefound = function(event) {
+            ocf.resources = [];
+            ocf.setBackend("mock").then(function() {
+                ocf.onresourcefound = function(event) {
                     event.resource.onupdate = function(event) {
                         expect(event.updates).toBeDefined();
                         expect(event.updates.length).toBe(1);
@@ -114,7 +114,7 @@ exports.defineAutoTests = function() {
                         done();
                     };
 
-                    oic.update({
+                    ocf.update({
                         "id": {
                             "deviceId": "127.0.0.1",
                             "resourcePath": "/update-test"
@@ -127,7 +127,7 @@ exports.defineAutoTests = function() {
                     });
                 };
 
-                oic.findResources({
+                ocf.findResources({
                     deviceId: "127.0.0.1",
                     resourcePath: "/update-test",
                     resourceTypes: ["test1"]

@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
         xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="cordova-plugin-oic" version="0.4.0">
-    <name>OicPlugin</name>
-    <description>Cordova OIC Plugin</description>
+        id="cordova-plugin-ocf" version="0.4.0">
+    <name>OcfPlugin</name>
+    <description>Cordova OCF Plugin</description>
     <license>Apache 2.0</license>
-    <js-module src="www/oic.js" name="oic">
-        <clobbers target="oic"/>
+    <js-module src="www/ocf.js" name="ocf">
+        <clobbers target="ocf"/>
     </js-module>
 
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="OicPlugin">
+            <feature name="OcfPlugin">
                 <param
                     name="android-package"
-                    value="com.intel.cordova.plugin.oic.OicPlugin"/>
+                    value="com.intel.cordova.plugin.ocf.OcfPlugin"/>
             </feature>
         </config-file>
 
-        <source-file src="src/android/OicPlugin.java" target-dir="src/" />
-        <source-file src="src/android/OicBackendInterface.java" target-dir="src/" />
-        <source-file src="src/android/OicBackendMock.java" target-dir="src/" />
-        <source-file src="src/android/OicBackendIotivity.java" target-dir="src/" />
-        <source-file src="src/android/OicInvalidBackendException.java" target-dir="src/" />
+        <source-file src="src/android/OcfPlugin.java" target-dir="src/" />
+        <source-file src="src/android/OcfBackendInterface.java" target-dir="src/" />
+        <source-file src="src/android/OcfBackendMock.java" target-dir="src/" />
+        <source-file src="src/android/OcfBackendIotivity.java" target-dir="src/" />
+        <source-file src="src/android/OcfInvalidBackendException.java" target-dir="src/" />
 
-        <source-file src="src/android/OicObjectInterface.java" target-dir="src/" />
-        <source-file src="src/android/OicResourceEvent.java" target-dir="src/" />
-        <source-file src="src/android/OicResourceUpdateEvent.java" target-dir="src/" />
-        <source-file src="src/android/OicResourceId.java" target-dir="src/" />
-        <source-file src="src/android/OicResource.java" target-dir="src/" />
-        <source-file src="src/android/OicResourceRepresentation.java" target-dir="src/" />
-        <source-file src="src/android/OicDeviceEvent.java" target-dir="src/" />
-        <source-file src="src/android/OicDevice.java" target-dir="src/" />
+        <source-file src="src/android/OcfObjectInterface.java" target-dir="src/" />
+        <source-file src="src/android/OcfResourceEvent.java" target-dir="src/" />
+        <source-file src="src/android/OcfResourceUpdateEvent.java" target-dir="src/" />
+        <source-file src="src/android/OcfResourceId.java" target-dir="src/" />
+        <source-file src="src/android/OcfResource.java" target-dir="src/" />
+        <source-file src="src/android/OcfResourceRepresentation.java" target-dir="src/" />
+        <source-file src="src/android/OcfDeviceEvent.java" target-dir="src/" />
+        <source-file src="src/android/OcfDevice.java" target-dir="src/" />
 
-        <framework src="src/android/oic.gradle" custom="true" type="gradleReference" />
+        <framework src="src/android/ocf.gradle" custom="true" type="gradleReference" />
         <resource-file src="libs/iotivity-1.1.patched.aar" target="libs/iotivity-1.1.patched.aar" />
     </platform>
 </plugin>

@@ -1,4 +1,4 @@
-package com.intel.cordova.plugin.oic;
+package com.intel.cordova.plugin.ocf;
 
 // Cordova
 import org.apache.cordova.CallbackContext;
@@ -14,25 +14,25 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class OicPlugin extends CordovaPlugin {
-    static final String TAG = "OicPlugin";
-    private OicBackendInterface backend;
+public class OcfPlugin extends CordovaPlugin {
+    static final String TAG = "OcfPlugin";
+    private OcfBackendInterface backend;
 
     private void setBackend(JSONArray args)
-        throws JSONException, OicInvalidBackendException
+        throws JSONException, OcfInvalidBackendException
     {
         String type = args.getString(0);
         if (type.equals("mock")) {
-            this.backend = new OicBackendMock(null);
+            this.backend = new OcfBackendMock(null);
         } else if (type.equals("iotivity")) {
-            this.backend = new OicBackendIotivity(this);
+            this.backend = new OcfBackendIotivity(this);
         } else {
-            throw new OicInvalidBackendException(type);
+            throw new OcfInvalidBackendException(type);
         }
     }
 
     private void findResources(final JSONArray args, final CallbackContext cc) {
-        final OicPlugin self = this;
+        final OcfPlugin self = this;
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
                 try {
@@ -45,7 +45,7 @@ public class OicPlugin extends CordovaPlugin {
     }
 
     private void findDevices(final CallbackContext cc) {
-        final OicPlugin self = this;
+        final OcfPlugin self = this;
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
                 self.backend.findDevices(cc);
@@ -54,7 +54,7 @@ public class OicPlugin extends CordovaPlugin {
     }
 
     private void updateResource(final JSONArray args, final CallbackContext cc) {
-        final OicPlugin self = this;
+        final OcfPlugin self = this;
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
                 try {
@@ -79,7 +79,7 @@ public class OicPlugin extends CordovaPlugin {
                 try {
                     this.setBackend(args);
                     cc.success();
-                } catch (OicInvalidBackendException e) {
+                } catch (OcfInvalidBackendException e) {
                     cc.error(e.getMessage());
                 }
             } else if ("findResources".equals(action)) {
